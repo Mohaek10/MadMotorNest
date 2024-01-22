@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common'
-import { VehiculosModule } from './rest/vehiculos/vehiculos.module'
+import { ConfigModule } from '@nestjs/config'
+import { CategoriasModule } from './categorias/categorias.module'
+import { BbddModule } from './configuracion/bbdd/bbdd.module'
 
 @Module({
-  imports: [VehiculosModule],
+  imports: [ConfigModule.forRoot(), BbddModule, CategoriasModule],
 })
 export class AppModule {}
