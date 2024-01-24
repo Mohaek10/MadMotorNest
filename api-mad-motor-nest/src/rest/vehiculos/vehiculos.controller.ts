@@ -10,24 +10,25 @@ import {
 import { VehiculosService } from './vehiculos.service'
 import { CreateVehiculoDto } from './dto/create-vehiculo.dto'
 import { UpdateVehiculoDto } from './dto/update-vehiculo.dto'
+import { Paginate, PaginateQuery } from 'nestjs-paginate'
 
 @Controller('vehiculos')
 export class VehiculosController {
   constructor(private readonly vehiculosService: VehiculosService) {}
 
-  @Post()
-  create(@Body() createVehiculoDto: CreateVehiculoDto) {
-    return this.vehiculosService.create(createVehiculoDto)
-  }
-
   @Get()
-  findAll() {
-    return this.vehiculosService.findAll()
+  findAll(@Paginate() query: PaginateQuery) {
+    return this.vehiculosService.findAll(query)
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.vehiculosService.findOne(+id)
+  }
+
+  @Post()
+  create(@Body() createVehiculoDto: CreateVehiculoDto) {
+    return this.vehiculosService.create(createVehiculoDto)
   }
 
   @Patch(':id')
