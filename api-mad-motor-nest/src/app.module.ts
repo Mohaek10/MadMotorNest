@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { CategoriasModule } from './rest/categorias/categorias.module'
-import { BbddModule } from './config/bbdd/bbdd.module'
+import { DatabaseModule } from './config/bbdd/database.module'
+import { VehiculosModule } from './rest/vehiculos/vehiculos.module'
 
 @Module({
-  imports: [ConfigModule.forRoot(), BbddModule, CategoriasModule],
+  imports: [
+    ConfigModule.forRoot(),
+    DatabaseModule,
+    CategoriasModule,
+    VehiculosModule,
+  ],
 })
 export class AppModule {}

@@ -23,4 +23,4 @@ import { ConfigModule } from '@nestjs/config'
   ],
   exports: [TypeOrmCoreModule],
 })
-export class BbddModule {}
+export class DatabaseModule {}
