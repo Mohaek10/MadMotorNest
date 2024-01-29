@@ -1,4 +1,10 @@
-import { Inject, Injectable, Logger } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { CreateVehiculoDto } from './dto/create-vehiculo.dto'
 import { UpdateVehiculoDto } from './dto/update-vehiculo.dto'
 import { VehiculoMapper } from './mappers/vehiculo-mapper'
@@ -15,6 +21,7 @@ import {
   PaginateQuery,
 } from 'nestjs-paginate'
 import { hash } from 'typeorm/util/StringUtils'
+import { ResponseVehiculoDto } from './dto/response-vehiculo.dto'
 
 @Injectable()
 export class VehiculosService {
@@ -69,19 +76,110 @@ export class VehiculosService {
     return resutado
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} vehiculo`
+  async findOne(id: number): Promise<ResponseVehiculoDto> {
+    this.logger.log(`Buscando vehiculo con id ${id}`)
+    const cache: ResponseVehiculoDto = await this.cacheManager.get(
+      `funko_${id}`,
+    )
+    if (cache) {
+      this.logger.log('Retornando vehiculo desde cache')
+      return cache
+    }
+    const buildVehiculo = await this.vehiculoRepository
+      .createQueryBuilder('vehiculo')
+      .leftJoinAndSelect('vehiculo.categoria', 'categoria')
+      .where('vehiculo.id = :id', { id: id })
+      .getOne()
+    if (!buildVehiculo) {
+      this.logger.warn(`No se encontro vehiculo con id ${id}`)
+      throw new NotFoundException(`No se encontro vehiculo con id ${id}`)
+    }
+    const vehiculo = this.vehiculoMapper.toResponseVehiculoDto(buildVehiculo)
+    await this.cacheManager.set(`vehiculo_${id}`, vehiculo, 800000)
+    return vehiculo
   }
 
-  async create(createVehiculoDto: CreateVehiculoDto) {
-    return 'This action adds a new vehiculo'
+  async create(
+    createVehiculoDto: CreateVehiculoDto,
+  ): Promise<ResponseVehiculoDto> {
+    this.logger.log('Creando vehiculo : ' + JSON.stringify(createVehiculoDto))
+    const categoria = await this.comprobarCategoria(createVehiculoDto.categoria)
+    const vehiculo = this.vehiculoMapper.toVehiculo(
+      createVehiculoDto,
+      categoria,
+    )
+    const vehiculoGuardado = await this.vehiculoRepository.save(vehiculo)
+    const res = this.vehiculoMapper.toResponseVehiculoDto(vehiculoGuardado)
+    await this.invalidateCacheKey('vehiculos')
+    return res
   }
 
-  update(id: number, updateVehiculoDto: UpdateVehiculoDto) {
-    return `This action updates a #${id} vehiculo`
+  async update(
+    id: number,
+    updateVehiculoDto: UpdateVehiculoDto,
+  ): Promise<ResponseVehiculoDto> {
+    this.logger.log('Actualizando vehiculo : ' + JSON.stringify(id))
+    const vehiculoToUpdate = this.vehiculoExists(id)
+    let categoria: Categoria
+    if (updateVehiculoDto.categoria) {
+      categoria = await this.comprobarCategoria(updateVehiculoDto.categoria)
+    } else {
+      categoria = (await vehiculoToUpdate).categoria
+    }
+    const vehiculoNuevo = this.vehiculoMapper.toVehiculoFromUpdate(
+      await vehiculoToUpdate,
+      updateVehiculoDto,
+      categoria,
+    )
+    const funkoActualizado = await this.vehiculoRepository.save(vehiculoNuevo)
+    this.logger.log('Vehiculo actualizado')
+    const res = this.vehiculoMapper.toResponseVehiculoDto(funkoActualizado)
+    await this.invalidateCacheKey('vehiculos')
+    return res
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} vehiculo`
+  async remove(id: number): Promise<Vehiculo> {
+    this.logger.log('Eliminando vehiculo : ' + id)
+    const vehiculo = this.vehiculoExists(id)
+    return await this.vehiculoRepository.remove(await vehiculo)
+  }
+
+  async borradoLogico(id: number): Promise<ResponseVehiculoDto> {
+    this.logger.log('Eliminando vehiculo : ' + id)
+    const vehiculo = await this.vehiculoExists(id)
+    vehiculo.isDeleted = true
+    const funkoBorrado = await this.vehiculoRepository.save(vehiculo)
+    await this.invalidateCacheKey('vehiculos')
+    return this.vehiculoMapper.toResponseVehiculoDto(funkoBorrado)
+  }
+
+  private async comprobarCategoria(nombreCate: string): Promise<Categoria> {
+    const categoria = await this.categoriaRepository
+      .createQueryBuilder('categoria')
+      .where('LOWER(nombre)=LOWER(:nombre)', {
+        nombre: nombreCate.toLowerCase(),
+      })
+      .getOne()
+    if (!categoria) {
+      this.logger.warn(`No se encontro categoria con nombre ${nombreCate}`)
+      throw new BadRequestException(
+        `No se encontro categoria con nombre ${nombreCate}`,
+      )
+    }
+    return categoria
+  }
+  public async invalidateCacheKey(keyPattern: string): Promise<void> {
+    const cacheKeys = await this.cacheManager.store.keys()
+    const keysToDelete = cacheKeys.filter((key) => key.startsWith(keyPattern))
+    const promises = keysToDelete.map((key) => this.cacheManager.del(key))
+    await Promise.all(promises)
+  }
+  public async vehiculoExists(id: number): Promise<Vehiculo> {
+    const vehiculo = await this.vehiculoRepository.findOneBy({ id })
+    if (!vehiculo) {
+      this.logger.warn(`No se encontro vehiculo con id ${id}`)
+      throw new NotFoundException(`No se encontro vehiculo con id ${id}`)
+    }
+    return vehiculo
   }
 }

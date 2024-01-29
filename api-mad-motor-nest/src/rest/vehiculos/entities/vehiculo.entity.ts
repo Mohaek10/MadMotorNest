@@ -18,16 +18,16 @@ export class Vehiculo {
   @Column({ type: 'varchar', length: 100 })
   modelo: string
 
-  @Column({ type: 'number' })
+  @Column({ type: 'varchar' })
   year: number
 
-  @Column({ type: 'number' })
+  @Column({ type: 'varchar' })
   km: number
 
-  @Column({ type: 'number' })
+  @Column({ type: 'varchar' })
   precio: number
 
-  @Column({ type: 'number' })
+  @Column({ type: 'varchar' })
   stock: number
 
   @Column({ type: 'varchar', default: 'https://picsum.photos/200' })
