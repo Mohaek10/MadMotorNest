@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Cliente } from './entities/cliente.entity'
 import { Repository } from 'typeorm'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Cache } from 'cache-manager'
 import { ClientesMapper } from './mapper/clientes.mapper'
 import {
   FilterOperator,
