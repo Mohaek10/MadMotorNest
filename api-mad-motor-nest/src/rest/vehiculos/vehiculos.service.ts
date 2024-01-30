@@ -22,6 +22,9 @@ import {
 } from 'nestjs-paginate'
 import { hash } from 'typeorm/util/StringUtils'
 import { ResponseVehiculoDto } from './dto/response-vehiculo.dto'
+import { Request } from 'express'
+import { StorageService } from '../storage/storage.service'
+import * as process from 'process'
 
 @Injectable()
 export class VehiculosService {
@@ -34,6 +37,7 @@ export class VehiculosService {
     @InjectRepository(Categoria)
     private readonly categoriaRepository: Repository<Categoria>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly storageService: StorageService,
   ) {}
 
   async findAll(query: PaginateQuery) {
@@ -79,7 +83,7 @@ export class VehiculosService {
   async findOne(id: number): Promise<ResponseVehiculoDto> {
     this.logger.log(`Buscando vehiculo con id ${id}`)
     const cache: ResponseVehiculoDto = await this.cacheManager.get(
-      `funko_${id}`,
+      `vehiculo_${id}`,
     )
     if (cache) {
       this.logger.log('Retornando vehiculo desde cache')
@@ -131,9 +135,10 @@ export class VehiculosService {
       updateVehiculoDto,
       categoria,
     )
-    const funkoActualizado = await this.vehiculoRepository.save(vehiculoNuevo)
+    const vehiculoActualizado =
+      await this.vehiculoRepository.save(vehiculoNuevo)
     this.logger.log('Vehiculo actualizado')
-    const res = this.vehiculoMapper.toResponseVehiculoDto(funkoActualizado)
+    const res = this.vehiculoMapper.toResponseVehiculoDto(vehiculoActualizado)
     await this.invalidateCacheKey('vehiculos')
     return res
   }
@@ -148,9 +153,56 @@ export class VehiculosService {
     this.logger.log('Eliminando vehiculo : ' + id)
     const vehiculo = await this.vehiculoExists(id)
     vehiculo.isDeleted = true
-    const funkoBorrado = await this.vehiculoRepository.save(vehiculo)
+    const vehiculoBorrado = await this.vehiculoRepository.save(vehiculo)
     await this.invalidateCacheKey('vehiculos')
-    return this.vehiculoMapper.toResponseVehiculoDto(funkoBorrado)
+    return this.vehiculoMapper.toResponseVehiculoDto(vehiculoBorrado)
+  }
+
+  async actualizarImagenVehiculo(
+    id: number,
+    file: Express.Multer.File,
+    req: Request,
+    conUrl: boolean,
+  ) {
+    this.logger.log('Actualizando imagen de vehiculo : ' + id)
+    let vehiculo: Vehiculo
+    try {
+      vehiculo = await this.vehiculoExists(id)
+    } catch (e) {
+      throw new BadRequestException(e.message)
+    }
+    if (vehiculo.image !== 'https://picsum.photos/200') {
+      this.logger.log('Eliminando imagen anterior')
+      const nombreDeImagenSinUrl = vehiculo.image
+      try {
+        this.storageService.borraFichero(nombreDeImagenSinUrl)
+      } catch (e) {
+        this.logger.warn('No se pudo eliminar imagen anterior')
+        throw new BadRequestException(
+          'No se pudo eliminar imagen anterior : ' + e.message,
+        )
+      }
+    }
+    if (!file) {
+      this.logger.warn('No se recibio imagen')
+      throw new BadRequestException('No se recibio imagen')
+    }
+    let filePath: string
+
+    if (conUrl) {
+      this.logger.log('Generando Url')
+      const version = process.env.API_VERSION
+        ? `/${process.env.API_VERSION}`
+        : 'v1'
+      filePath = `${req.protocol}://${req.get('host')}${version}/storage/${file.filename}`
+    } else {
+      filePath = file.filename
+    }
+    vehiculo.image = filePath
+    await this.vehiculoRepository.save(vehiculo)
+    await this.invalidateCacheKey('vehiculos')
+    const res = this.vehiculoMapper.toResponseVehiculoDto(vehiculo)
+    return res
   }
 
   private async comprobarCategoria(nombreCate: string): Promise<Categoria> {
