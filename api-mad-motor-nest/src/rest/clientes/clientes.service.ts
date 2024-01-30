@@ -53,14 +53,14 @@ export class ClientesService {
     })
     return result
   }
-  async findOne(id: string) {
-    this.logger.log(`Buscando cliente con dni ${id}`)
-    const cliente = await this.searchByDni(id)
+  async findOne(id: number) {
+    this.logger.log(`Buscando cliente con id ${id}`)
+    const cliente = await this.searchById(id)
     return this.mapper.toClienteResponse(cliente)
   }
-  async update(id: string, updateClienteDto: UpdateClienteDto) {
-    this.logger.log(`Actualizando cliente con dni ${id}`)
-    const toUpdate = await this.searchByDni(id)
+  async update(id: number, updateClienteDto: UpdateClienteDto) {
+    this.logger.log(`Actualizando cliente con id ${id}`)
+    const toUpdate = await this.searchById(id)
     this.logger.log(
       `Empezando a actualizar cliente ${JSON.stringify(toUpdate)}`,
     )
@@ -70,23 +70,23 @@ export class ClientesService {
     return this.mapper.toClienteResponse(cliente)
   }
 
-  async remove(id: string) {
-    this.logger.log(`Eliminando cliente con dni ${id}`)
-    const toDelete = await this.searchByDni(id)
+  async remove(id: number) {
+    this.logger.log(`Eliminando cliente con id ${id}`)
+    const toDelete = await this.searchById(id)
     this.logger.log(`Empezando a eliminar cliente ${JSON.stringify(toDelete)}`)
     const cliente = await this.clienteRepository.remove(toDelete)
     this.logger.log(`Cliente eliminado`)
     return this.mapper.toClienteResponse(cliente)
   }
 
-  async searchByDni(dni: string) {
-    this.logger.log(`Buscando cliente con dni ${dni}`)
-    const exits = await this.clienteRepository.findOne({ where: { dni: dni } })
+  async searchById(id: number) {
+    this.logger.log(`Buscando cliente con id ${id}`)
+    const exits = await this.clienteRepository.findOne({ where: { id: id } })
     if (exits) {
-      this.logger.log(`Cliente con dni ${dni} encontrado`)
+      this.logger.log(`Cliente con id ${id} encontrado`)
       return exits
     } else {
-      throw new NotFoundException(`No existe el cliente con dni ${dni}`)
+      throw new NotFoundException(`No existe el cliente con id ${id}`)
     }
   }
 }

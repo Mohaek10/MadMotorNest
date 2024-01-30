@@ -15,7 +15,7 @@ export class Exist implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest()
     const dni = request.params.dni
-    return this._clienteService.searchByDni(dni).then((exists) => {
+    return this._clienteService.searchById(dni).then((exists) => {
       if (!exists) {
         throw new BadRequestException('El cliente no existe')
       }

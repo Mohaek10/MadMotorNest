@@ -6,12 +6,10 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common'
 import { ClientesService } from './clientes.service'
 import { CreateClienteDto } from './dto/create-cliente.dto'
 import { UpdateClienteDto } from './dto/update-cliente.dto'
-import { DniGuard } from './guards/dni.guard'
 import { Paginate, PaginateQuery } from 'nestjs-paginate'
 
 @Controller('clientes')
@@ -29,20 +27,17 @@ export class ClientesController {
   }
 
   @Get(':id')
-  @UseGuards(DniGuard)
-  findOne(@Param('id') id: string) {
-    return this.clientesService.findOne(id)
+  findOne(@Param('id') id: number) {
+    return this.clientesService.findOne(+id)
   }
 
   @Patch(':id')
-  @UseGuards(DniGuard)
-  update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
-    return this.clientesService.update(id, updateClienteDto)
+  update(@Param('id') id: number, @Body() updateClienteDto: UpdateClienteDto) {
+    return this.clientesService.update(+id, updateClienteDto)
   }
 
   @Delete(':id')
-  @UseGuards(DniGuard)
-  remove(@Param('id') id: string) {
-    return this.clientesService.remove(id)
+  remove(@Param('id') id: number) {
+    return this.clientesService.remove(+id)
   }
 }
