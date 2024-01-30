@@ -4,9 +4,9 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPostalCode,
   IsString,
   Length,
+  Min,
 } from 'class-validator'
 import { Transform } from 'class-transformer'
 
@@ -32,7 +32,7 @@ export class CreateClienteDto {
   direccion: string
   @IsNotEmpty()
   @IsNumber()
-  @IsPostalCode('ES')
+  @Min(10000)
   codigoPostal: number
   @IsString()
   @IsIdentityCard('ES')
