@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Logger,
-  Res,
-} from '@nestjs/common'
+import { Controller, Get, Param, Logger, Res } from '@nestjs/common'
 import { Response } from 'express'
 import { StorageService } from './storage.service'
 

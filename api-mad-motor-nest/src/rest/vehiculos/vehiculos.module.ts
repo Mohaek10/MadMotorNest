@@ -6,12 +6,14 @@ import { Vehiculo } from './entities/vehiculo.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Categoria } from '../categorias/entities/categoria.entity'
 import { CacheModule } from '@nestjs/cache-manager'
+import { StorageModule } from '../storage/storage.module'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Vehiculo]),
     TypeOrmModule.forFeature([Categoria]),
     CacheModule.register(),
+    StorageModule,
   ],
   controllers: [VehiculosController],
   providers: [VehiculosService, VehiculoMapper],
