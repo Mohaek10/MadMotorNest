@@ -83,7 +83,7 @@ export class VehiculosService {
   async findOne(id: number): Promise<ResponseVehiculoDto> {
     this.logger.log(`Buscando vehiculo con id ${id}`)
     const cache: ResponseVehiculoDto = await this.cacheManager.get(
-      `funko_${id}`,
+      `vehiculo_${id}`,
     )
     if (cache) {
       this.logger.log('Retornando vehiculo desde cache')
@@ -135,9 +135,10 @@ export class VehiculosService {
       updateVehiculoDto,
       categoria,
     )
-    const funkoActualizado = await this.vehiculoRepository.save(vehiculoNuevo)
+    const vehiculoActualizado =
+      await this.vehiculoRepository.save(vehiculoNuevo)
     this.logger.log('Vehiculo actualizado')
-    const res = this.vehiculoMapper.toResponseVehiculoDto(funkoActualizado)
+    const res = this.vehiculoMapper.toResponseVehiculoDto(vehiculoActualizado)
     await this.invalidateCacheKey('vehiculos')
     return res
   }
@@ -152,9 +153,9 @@ export class VehiculosService {
     this.logger.log('Eliminando vehiculo : ' + id)
     const vehiculo = await this.vehiculoExists(id)
     vehiculo.isDeleted = true
-    const funkoBorrado = await this.vehiculoRepository.save(vehiculo)
+    const vehiculoBorrado = await this.vehiculoRepository.save(vehiculo)
     await this.invalidateCacheKey('vehiculos')
-    return this.vehiculoMapper.toResponseVehiculoDto(funkoBorrado)
+    return this.vehiculoMapper.toResponseVehiculoDto(vehiculoBorrado)
   }
 
   async actualizarImagenVehiculo(
