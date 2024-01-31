@@ -162,6 +162,7 @@ export class CategoriasService {
       categoria,
       60,
     )
+    return categoria
   }
 
   async invalidateCacheKey(keyPattern: string): Promise<void> {
