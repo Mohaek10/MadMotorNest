@@ -1,9 +1,17 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { CategoriasModule } from './categorias/categorias.module'
-import { BbddModule } from './configuracion/bbdd/bbdd.module'
+import { CategoriasModule } from './rest/categorias/categorias.module'
+import { DatabaseModule } from './config/database/database.module'
+import { VehiculosModule } from './rest/vehiculos/vehiculos.module'
+import { CacheModule } from '@nestjs/cache-manager'
 
 @Module({
-  imports: [ConfigModule.forRoot(), BbddModule, CategoriasModule],
+  imports: [
+    ConfigModule.forRoot(),
+    DatabaseModule,
+    CacheModule.register(),
+    CategoriasModule,
+    VehiculosModule,
+  ],
 })
 export class AppModule {}
