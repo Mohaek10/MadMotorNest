@@ -6,10 +6,7 @@ import { Personal } from './entities/personal.entity'
 import { CacheModule } from '@nestjs/cache-manager'
 
 @Module({
-  imports: [
-      TypeOrmModule.forFeature([Personal]),
-      CacheModule.register(),
-  ],
+  imports: [TypeOrmModule.forFeature([Personal]), CacheModule.register()],
   controllers: [PersonalController],
   providers: [PersonalService],
 })

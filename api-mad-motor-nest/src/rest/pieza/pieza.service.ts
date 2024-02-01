@@ -50,7 +50,7 @@ export class PiezaService {
       return cache
     }
 
-    const queryBuilder = this.piezaRepository.createQueryBuilder('pieza');
+    const queryBuilder = this.piezaRepository.createQueryBuilder('pieza')
 
     const pagination = await paginate(query, queryBuilder, {
       sortableColumns: ['nombre', 'precio', 'cantidad', 'isDeleted'],
@@ -62,7 +62,6 @@ export class PiezaService {
         isDeleted: [FilterOperator.EQ, FilterSuffix.NOT],
       },
     })
-
 
     const res = {
       data: (pagination.data ?? []).map((pieza) =>
@@ -172,7 +171,7 @@ export class PiezaService {
     piezaToRemove.isDeleted = true
     return await this.piezaRepository.save(piezaToRemove)
   }
-  
+
   async exists(id: string) {
     const pieza = await this.piezaRepository.findOne({ where: { id } })
 

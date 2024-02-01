@@ -179,11 +179,9 @@ describe('PiezaService', () => {
     })
 
     it('should throw NotFoundException if pieza not found', async () => {
-      const id=        '7fe81546-bec9-4356-a4f3-4913e1e8db80'
+      const id = '7fe81546-bec9-4356-a4f3-4913e1e8db80'
 
-
-
-          jest.spyOn(cacheManager, 'get').mockResolvedValue(null)
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(null)
 
       jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValueOnce({
         where: jest.fn().mockReturnThis(),
@@ -366,6 +364,4 @@ describe('PiezaService', () => {
       await expect(service.exists(id)).rejects.toThrowError(NotFoundException)
     })
   })
-
-
 })
