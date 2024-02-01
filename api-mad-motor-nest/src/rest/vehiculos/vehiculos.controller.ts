@@ -61,7 +61,7 @@ export class VehiculosController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: process.env.filesDir,
+        destination: process.env.filesDir || './uploads',
         filename: (req, file, cb) => {
           const fileName = uuidv4()
           const fileExt = extname(file.originalname)
@@ -70,7 +70,7 @@ export class VehiculosController {
       }),
       fileFilter: (req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-          cb(new BadRequestException('El archivo no es una imagen'), false)
+          cb(new BadRequestException('Fichero no soportado.'), false)
         } else {
           cb(null, true)
         }

@@ -29,7 +29,7 @@ export class StorageService {
     this.logger.log(`Ficheros con url ${ficherosConUrl}`)
     return ficherosConUrl
   }
-  async encontrarFichero(nombreFich: string): Promise<string> {
+  encontrarFichero(nombreFich: string): string {
     this.logger.log(`Buscando fichero ${nombreFich}`)
     const fichero = path.join(process.cwd(), process.env.filesDir, nombreFich)
     if (fs.existsSync(fichero)) {
@@ -37,10 +37,9 @@ export class StorageService {
       return fichero
     } else {
       this.logger.log(`Fichero no encontrado ${nombreFich}`)
-      throw new NotFoundException(`Fichero ${nombreFich} no encontrado`)
     }
   }
-  async borraFichero(nombreFich: string) {
+  borraFichero(nombreFich: string) {
     this.logger.log(`Borrando fichero ${nombreFich}`)
     const file = path.join(process.cwd(), process.env.filesDir, nombreFich)
     this.logger.log(`Fichero a borrar ${file}`)
