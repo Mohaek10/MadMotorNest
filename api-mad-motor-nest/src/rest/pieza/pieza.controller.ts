@@ -3,11 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
-  UseGuards,
   NotFoundException,
   Put,
 } from '@nestjs/common'
@@ -16,9 +14,6 @@ import { CreatePiezaDto } from './dto/create-pieza.dto'
 import { UpdatePiezaDto } from './dto/update-pieza.dto'
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager'
 import { Paginate, PaginateQuery } from 'nestjs-paginate'
-import { UUID } from 'crypto'
-import { Roles, RolesAuthGuard } from 'src/auth/guards/roles-auth.guard'
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
 @Controller('pieza')
 @UseInterceptors(CacheInterceptor)
 export class PiezaController {
@@ -44,8 +39,6 @@ export class PiezaController {
     return PiezaToFound
   }
 
-  @UseGuards(JwtAuthGuard, RolesAuthGuard)
-  @Roles('ADMIN')
   @Put(':id')
   async update(
     @Param('id') id: string,
