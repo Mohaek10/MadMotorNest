@@ -198,9 +198,12 @@ export class VehiculosService {
     } else {
       filePath = file.filename
     }
-    vehiculo.image = filePath
+
+    vehiculo.image = file.filename
+    this.logger.log('Guardando imagen: ' + filePath)
     await this.vehiculoRepository.save(vehiculo)
     await this.invalidateCacheKey('vehiculos')
+    vehiculo.image = filePath
     const res = this.vehiculoMapper.toResponseVehiculoDto(vehiculo)
     return res
   }
