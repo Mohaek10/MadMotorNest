@@ -2,11 +2,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import { Vehiculo } from '../../vehiculos/entities/vehiculo.entity'
 
 @Entity({ name: 'categorias' })
 export class Categoria {
@@ -33,7 +31,4 @@ export class Categoria {
 
   @Column({ name: 'is_deleted', type: 'boolean', default: false })
   isDeleted: boolean
-
-  @OneToMany(() => Vehiculo, (vehiculo) => vehiculo.categoria)
-  vehiculos: Vehiculo[]
 }
