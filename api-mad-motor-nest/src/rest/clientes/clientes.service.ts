@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { CreateClienteDto } from './dto/create-cliente.dto'
 import { UpdateClienteDto } from './dto/update-cliente.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -29,7 +29,7 @@ export class ClientesService {
       where: { dni: createClienteDto.dni },
     })
     if (existe) {
-      throw new NotFoundException(
+      throw new BadRequestException(
         `Ya existe un cliente con dni: ${createClienteDto.dni} en la base de datos`,
       )
     } else {
