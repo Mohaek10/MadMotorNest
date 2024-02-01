@@ -5,6 +5,8 @@ import { DatabaseModule } from './config/database/database.module'
 import { VehiculosModule } from './rest/vehiculos/vehiculos.module'
 import { CacheModule } from '@nestjs/cache-manager'
 import { ClientesModule } from './rest/clientes/clientes.module'
+import { StorageModule } from './rest/storage/storage.module'
+import {PiezaModule} from "./rest/pieza/pieza.module";
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { ClientesModule } from './rest/clientes/clientes.module'
     CategoriasModule,
     VehiculosModule,
     ClientesModule,
+    StorageModule,
+      PiezaModule
   ],
 })
 export class AppModule {}

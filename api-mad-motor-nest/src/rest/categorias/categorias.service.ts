@@ -106,7 +106,7 @@ export class CategoriasService {
   }
 
   async update(id: string, updateCategoriaDto: UpdateCategoriaDto) {
-    this.logger.log(`Actualizando el funko con ID: ${id}`)
+    this.logger.log(`Actualizando el categoria con ID: ${id}`)
     const updateCategoria = await this.findOne(id)
 
     if (updateCategoriaDto.nombre) {
@@ -162,6 +162,7 @@ export class CategoriasService {
       categoria,
       60,
     )
+    return categoria
   }
 
   async invalidateCacheKey(keyPattern: string): Promise<void> {

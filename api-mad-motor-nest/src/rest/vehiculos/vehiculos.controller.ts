@@ -8,11 +8,21 @@ import {
   Delete,
   HttpCode,
   ParseIntPipe,
+  UseInterceptors,
+  BadRequestException,
+  UploadedFile,
+  Req,
 } from '@nestjs/common'
 import { VehiculosService } from './vehiculos.service'
 import { CreateVehiculoDto } from './dto/create-vehiculo.dto'
 import { UpdateVehiculoDto } from './dto/update-vehiculo.dto'
 import { Paginate, PaginateQuery } from 'nestjs-paginate'
+import { extname } from 'path'
+import { v4 as uuidv4 } from 'uuid'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { diskStorage } from 'multer'
+import * as process from 'process'
+import { Request } from 'express'
 
 @Controller('vehiculos')
 export class VehiculosController {
@@ -45,5 +55,39 @@ export class VehiculosController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.vehiculosService.remove(+id)
+  }
+
+  @Patch('imagen/:id')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: process.env.filesDir,
+        filename: (req, file, cb) => {
+          const fileName = uuidv4()
+          const fileExt = extname(file.originalname)
+          cb(null, `${fileName}${fileExt}`)
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+          cb(new BadRequestException('El archivo no es una imagen'), false)
+        } else {
+          cb(null, true)
+        }
+      },
+    }),
+  )
+  async actualizarImagenVehiculo(
+    @Param('id') id: number,
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+  ) {
+    if (!file) {
+      throw new BadRequestException('No se ha enviado ninguna imagen')
+    }
+    const vehiculoActualizado =
+      await this.vehiculosService.actualizarImagenVehiculo(id, file, req, true)
+    await this.vehiculosService.invalidateCacheKey('vehiculos')
+    return vehiculoActualizado
   }
 }

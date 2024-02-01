@@ -1,6 +1,5 @@
 {
   "name": "api-mad-motor-nest",
-
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -28,6 +27,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.1",
+    "@types/multer": "^1.4.11",
     "cache-manager": "^5.4.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
