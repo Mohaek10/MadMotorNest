@@ -7,6 +7,8 @@ import { CacheModule } from '@nestjs/cache-manager'
 import { ClientesModule } from './rest/clientes/clientes.module'
 import { StorageModule } from './rest/storage/storage.module'
 import { PiezaModule } from './rest/pieza/pieza.module'
+import {UsersModule} from "./rest/users/users.module";
+import {AuthModule} from "./auth/auth.module";
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { PiezaModule } from './rest/pieza/pieza.module'
     ClientesModule,
     StorageModule,
     PiezaModule,
+      UsersModule,
+      AuthModule,
   ],
 })
 export class AppModule {}
