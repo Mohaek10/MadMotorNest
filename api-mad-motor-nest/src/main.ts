@@ -2,9 +2,14 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import * as process from 'process'
 import { ValidationPipe } from '@nestjs/common'
+import * as fs from 'fs'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const httpsOptions = {
+    key: fs.readFileSync(process.env.SSL_KEY),
+    cert: fs.readFileSync(process.env.SSL_CERT),
+  }
+  const app = await NestFactory.create(AppModule, { httpsOptions })
 
   app.setGlobalPrefix(process.env.API_VERSION || 'v1')
 
