@@ -25,6 +25,11 @@ import { ResponseVehiculoDto } from './dto/response-vehiculo.dto'
 import { Request } from 'express'
 import { StorageService } from '../storage/storage.service'
 import * as process from 'process'
+import {
+  Notificacion,
+  NotificacionTipo,
+} from '../../notification/model/notification.model'
+import { NotificationGateway } from '../../notification/notification.gateway'
 
 @Injectable()
 export class VehiculosService {
@@ -38,6 +43,7 @@ export class VehiculosService {
     private readonly categoriaRepository: Repository<Categoria>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly storageService: StorageService,
+    private readonly notificacionService: NotificationGateway,
   ) {}
 
   async findAll(query: PaginateQuery) {
@@ -115,6 +121,7 @@ export class VehiculosService {
     const vehiculoGuardado = await this.vehiculoRepository.save(vehiculo)
     const res = this.vehiculoMapper.toResponseVehiculoDto(vehiculoGuardado)
     await this.invalidateCacheKey('vehiculos')
+    this.onChanges(NotificacionTipo.CREATE, res)
     return res
   }
 
@@ -140,6 +147,7 @@ export class VehiculosService {
     this.logger.log('Vehiculo actualizado')
     const res = this.vehiculoMapper.toResponseVehiculoDto(vehiculoActualizado)
     await this.invalidateCacheKey('vehiculos')
+    this.onChanges(NotificacionTipo.UPDATE, res)
     return res
   }
 
@@ -155,7 +163,9 @@ export class VehiculosService {
     vehiculo.isDeleted = true
     const vehiculoBorrado = await this.vehiculoRepository.save(vehiculo)
     await this.invalidateCacheKey('vehiculos')
-    return this.vehiculoMapper.toResponseVehiculoDto(vehiculoBorrado)
+    const dto = this.vehiculoMapper.toResponseVehiculoDto(vehiculoBorrado)
+    this.onChanges(NotificacionTipo.DELETE, dto)
+    return dto
   }
 
   async actualizarImagenVehiculo(
@@ -205,6 +215,7 @@ export class VehiculosService {
     await this.invalidateCacheKey('vehiculos')
     vehiculo.image = filePath
     const res = this.vehiculoMapper.toResponseVehiculoDto(vehiculo)
+    this.onChanges(NotificacionTipo.UPDATE, res)
     return res
   }
 
@@ -236,5 +247,15 @@ export class VehiculosService {
       throw new NotFoundException(`No se encontro vehiculo con id ${id}`)
     }
     return vehiculo
+  }
+
+  private onChanges(tipo: NotificacionTipo, data: ResponseVehiculoDto) {
+    const notificacion = new Notificacion<ResponseVehiculoDto>(
+      'vehiculo',
+      tipo,
+      data,
+      new Date(),
+    )
+    this.notificacionService.sendMessage(notificacion)
   }
 }

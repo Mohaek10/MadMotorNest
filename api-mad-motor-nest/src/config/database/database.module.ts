@@ -17,7 +17,7 @@ import { ConfigModule } from '@nestjs/config'
         autoLoadEntities: true,
         entities: [`${__dirname}/**/*.entity{.ts,.js}`],
         synchronize: true,
-        logging: process.env.NODE_ENV === 'dev' ? 'all' : false,
+        logging: false,
       }),
     }),
   ],
