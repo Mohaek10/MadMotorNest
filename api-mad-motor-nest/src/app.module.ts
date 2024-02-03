@@ -8,6 +8,8 @@ import { ClientesModule } from './rest/clientes/clientes.module'
 import { StorageModule } from './rest/storage/storage.module'
 import { PiezaModule } from './rest/pieza/pieza.module'
 import { NotificationModule } from './notification/notification.module'
+import { AuthModule } from './auth/auth.module'
+import { UsersModule } from './users/users.module'
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { NotificationModule } from './notification/notification.module'
     ClientesModule,
     StorageModule,
     PiezaModule,
+    AuthModule,
+    UsersModule,
   ],
 })
 export class AppModule {}
