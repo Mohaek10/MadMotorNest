@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common'
+import { Logger, Module } from '@nestjs/common'
 import * as process from 'process'
 import { TypeOrmCoreModule } from '@nestjs/typeorm/dist/typeorm-core.module'
 import { ConfigModule } from '@nestjs/config'
+import { MongooseModule } from '@nestjs/mongoose'
 
 @Module({
   imports: [
@@ -18,6 +19,22 @@ import { ConfigModule } from '@nestjs/config'
         entities: [`${__dirname}/**/*.entity{.ts,.js}`],
         synchronize: true,
         logging: false,
+        retryAttempts: 10,
+        connectionFactory: (connection) => {
+          Logger.log('Database connection established', 'DatabaseModule')
+          return connection
+        },
+      }),
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async () => ({
+        uri: `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`,
+        retryAttempts: 10,
+        connectionFactory: (connection) => {
+          Logger.log('Database connection established', 'DatabaseModule')
+          return connection
+        },
       }),
     }),
   ],

@@ -14,7 +14,7 @@ import { BcryptService } from './bcrypt.service'
     TypeOrmModule.forFeature([Usuario]),
     TypeOrmModule.forFeature([UserRole]),
     CacheModule.register(),
-   /*  PedidosModule, */
+    /*  PedidosModule, */
   ],
   controllers: [UsersController],
   providers: [UsersService, UsuariosMapper, BcryptService],
