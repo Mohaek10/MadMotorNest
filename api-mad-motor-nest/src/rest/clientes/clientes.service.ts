@@ -21,7 +21,7 @@ import {
 } from 'nestjs-paginate'
 import { hash } from 'typeorm/util/StringUtils'
 import { ResponseClienteDto } from './dto/response-cliente.dto'
-import { StorageService } from "../storage/storage.service";
+import { StorageService } from '../storage/storage.service'
 
 @Injectable()
 export class ClientesService {
