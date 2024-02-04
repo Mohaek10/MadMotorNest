@@ -8,6 +8,7 @@ import { Categoria } from '../categorias/entities/categoria.entity'
 import { CacheModule } from '@nestjs/cache-manager'
 import { StorageModule } from '../storage/storage.module'
 import { StorageService } from '../storage/storage.service'
+import { NotificationModule } from '../../notification/notification.module'
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { StorageService } from '../storage/storage.service'
     TypeOrmModule.forFeature([Categoria]),
     CacheModule.register(),
     StorageModule,
+    NotificationModule,
   ],
   controllers: [VehiculosController],
   providers: [VehiculosService, VehiculoMapper, StorageService],

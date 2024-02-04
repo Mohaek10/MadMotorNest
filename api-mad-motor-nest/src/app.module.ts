@@ -6,18 +6,24 @@ import { VehiculosModule } from './rest/vehiculos/vehiculos.module'
 import { CacheModule } from '@nestjs/cache-manager'
 import { ClientesModule } from './rest/clientes/clientes.module'
 import { StorageModule } from './rest/storage/storage.module'
-import {PiezaModule} from "./rest/pieza/pieza.module";
+import { PiezaModule } from './rest/pieza/pieza.module'
+import { NotificationModule } from './notification/notification.module'
+import { AuthModule } from './auth/auth.module'
+import { UsersModule } from './users/users.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     DatabaseModule,
     CacheModule.register(),
+    NotificationModule,
     CategoriasModule,
     VehiculosModule,
     ClientesModule,
     StorageModule,
-      PiezaModule
+    PiezaModule,
+    AuthModule,
+    UsersModule,
   ],
 })
 export class AppModule {}
