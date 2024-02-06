@@ -61,7 +61,7 @@ export class VehiculosController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: process.env.filesDir || './uploads',
+        destination: process.env.FILESDIR || './uploads',
         filename: (req, file, cb) => {
           const fileName = uuidv4()
           const fileExt = extname(file.originalname)

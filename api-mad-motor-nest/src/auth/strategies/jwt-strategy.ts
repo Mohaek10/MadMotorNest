@@ -11,8 +11,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: Buffer.from(
-        process.env.TOKEN_SECRET ||
-          'madmotor_token',
+        process.env.TOKEN_SECRET || 'madmotor_token',
         'utf-8',
       ).toString('base64'),
     })

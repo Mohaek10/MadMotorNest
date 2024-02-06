@@ -96,12 +96,11 @@ export class UsersService {
       user.isDeleted = true
       return await this.usuariosRepository.save(user)
     } else { */
-      /* for (const userRole of user.roles) {
+    /* for (const userRole of user.roles) {
         await this.userRoleRepository.remove(userRole)
       } */
-      return await this.usuariosRepository.delete({ id: user.id })
-    }
-  
+    return await this.usuariosRepository.delete({ id: user.id })
+  }
 
   async update(
     id: number,

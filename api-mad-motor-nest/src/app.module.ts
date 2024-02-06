@@ -10,6 +10,7 @@ import { PiezaModule } from './rest/pieza/pieza.module'
 import { NotificationModule } from './notification/notification.module'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
+import { PedidosModule } from './rest/pedidos/pedidos.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module'
     PiezaModule,
     AuthModule,
     UsersModule,
+    PedidosModule,
   ],
 })
 export class AppModule {}
