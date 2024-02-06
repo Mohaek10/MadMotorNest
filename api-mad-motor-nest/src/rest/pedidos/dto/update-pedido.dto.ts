@@ -13,5 +13,5 @@ export class UpdatePedidoDto extends PartialType(CreatePedidoDto) {
   cliente: ClienteDto
 
   @IsNotEmpty()
-  lineaDePedido: LineaDePedidoDto
+  lineasDePedido: LineaDePedidoDto
 }

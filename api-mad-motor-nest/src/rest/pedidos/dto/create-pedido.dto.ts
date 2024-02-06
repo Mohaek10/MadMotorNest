@@ -11,5 +11,5 @@ export class CreatePedidoDto {
   cliente: ClienteDto
 
   @IsNotEmpty()
-  lineaDePedido: LineaDePedidoDto
+  lineasDePedido: LineaDePedidoDto
 }

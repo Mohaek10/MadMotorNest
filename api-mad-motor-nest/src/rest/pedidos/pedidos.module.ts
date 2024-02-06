@@ -9,6 +9,7 @@ import { Vehiculo } from '../vehiculos/entities/vehiculo.entity'
 import { CacheModule } from '@nestjs/cache-manager'
 import { Pieza } from '../pieza/entities/pieza.entity'
 import { Usuario } from '../../users/entities/user.entity'
+import { PedidosMapper } from './mappers/pedidos.mapper'
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { Usuario } from '../../users/entities/user.entity'
     TypeOrmModule.forFeature([Usuario]),
   ],
   controllers: [PedidosController],
-  providers: [PedidosService],
+  providers: [PedidosService, PedidosMapper],
   exports: [PedidosModule],
 })
 export class PedidosModule {}
