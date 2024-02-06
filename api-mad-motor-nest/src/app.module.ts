@@ -8,9 +8,9 @@ import { ClientesModule } from './rest/clientes/clientes.module'
 import { StorageModule } from './rest/storage/storage.module'
 import { PiezaModule } from './rest/pieza/pieza.module'
 import { NotificationModule } from './notification/notification.module'
-import { AuthModule } from './auth/auth.module'
-import { UsersModule } from './users/users.module'
-import { PedidosModule } from './rest/pedidos/pedidos.module';
+import { AuthModule } from './rest/auth/auth.module'
+import { UsersModule } from './rest/users/users.module'
+import { PedidosModule } from './rest/pedidos/pedidos.module'
 
 @Module({
   imports: [
@@ -23,9 +23,9 @@ import { PedidosModule } from './rest/pedidos/pedidos.module';
     ClientesModule,
     StorageModule,
     PiezaModule,
+    PedidosModule,
     AuthModule,
     UsersModule,
-    PedidosModule,
   ],
 })
 export class AppModule {}

@@ -35,7 +35,7 @@ CREATE TABLE "public"."clientes" (
 
 DROP TABLE IF EXISTS "pieza";
 CREATE TABLE "public"."pieza" (
-    "id" uuid DEFAULT uuid_generate_v4() NOT NULL,
+    "id" uuid NOT NULL,
     "nombre" character varying(100) NOT NULL,
     "precio" numeric NOT NULL,
     "descripcion" character varying(100) NOT NULL,

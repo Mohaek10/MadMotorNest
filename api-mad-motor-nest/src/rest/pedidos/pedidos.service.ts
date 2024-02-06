@@ -12,7 +12,7 @@ import { PaginateModel } from 'mongoose'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Vehiculo } from '../vehiculos/entities/vehiculo.entity'
 import { Repository } from 'typeorm'
-import { Usuario } from '../../users/entities/user.entity'
+import { Usuario } from '../users/entities/user.entity'
 import { Pieza } from '../pieza/entities/pieza.entity'
 import { PedidosMapper } from './mappers/pedidos.mapper'
 
@@ -97,6 +97,10 @@ export class PedidosService {
 
   remove(id: string) {
     return `This action removes a #${id} pedido`
+  }
+
+  async userExists(idUsuario: number) {
+    return await this.usuarioRepo.findOneBy({ id: idUsuario })
   }
 
   private async comprobarPedido(pedido: Pedido) {

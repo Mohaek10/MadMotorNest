@@ -13,9 +13,9 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { Role, UserRole } from './entities/user-role.entity'
 import { BcryptService } from './bcrypt.service'
 import { UpdateUserDto } from './dto/update-user.dto'
-/* import { PedidosService } from '../pedidos/pedidos.service'
+import { PedidosService } from '../pedidos/pedidos.service'
 import { CreatePedidoDto } from '../pedidos/dto/create-pedido.dto'
-import { UpdatePedidoDto } from '../pedidos/dto/update-pedido.dto' */
+import { UpdatePedidoDto } from '../pedidos/dto/update-pedido.dto'
 
 @Injectable()
 export class UsersService {
@@ -26,7 +26,7 @@ export class UsersService {
     private readonly usuariosRepository: Repository<Usuario>,
     @InjectRepository(UserRole)
     private readonly userRoleRepository: Repository<UserRole>,
-    /* private readonly pedidosService: PedidosService, */
+    private readonly pedidosService: PedidosService,
     private readonly usuariosMapper: UsuariosMapper,
     private readonly bcryptService: BcryptService,
   ) {}
@@ -90,15 +90,16 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException(`User not found with id ${idUser}`)
     }
-    /* const existsPedidos = await this.pedidosService.userExists(user.id) */
-    /* if (existsPedidos) {
+    const existsPedidos = await this.pedidosService.userExists(user.id)
+    if (existsPedidos) {
       user.updatedAt = new Date()
       user.isDeleted = true
       return await this.usuariosRepository.save(user)
-    } else { */
-    /* for (const userRole of user.roles) {
+    } else {
+      for (const userRole of user.roles) {
         await this.userRoleRepository.remove(userRole)
-      } */
+      }
+    }
     return await this.usuariosRepository.delete({ id: user.id })
   }
 
@@ -153,11 +154,11 @@ export class UsersService {
     return this.usuariosMapper.toResponseDto(updatedUser)
   }
 
-  /* async getPedidos(id: number) {
-    return await this.pedidosService.getPedidosByUser(id)
-  } */
+  async getPedidos(id: number) {
+    return await this.pedidosService.findByIdUsuario(id)
+  }
 
-  /* async getPedido(idUser: number, idPedido: string) {
+  async getPedido(idUser: number, idPedido: string) {
     const pedido = await this.pedidosService.findOne(idPedido)
     console.log(pedido.idUsuario)
     console.log(idUser)
@@ -168,18 +169,18 @@ export class UsersService {
     }
     return pedido
   }
- */
-  /* async createPedido(createPedidoDto: CreatePedidoDto, userId: number) {
+
+  async createPedido(createPedidoDto: CreatePedidoDto, userId: number) {
     this.logger.log(`Creando pedido ${JSON.stringify(createPedidoDto)}`)
     if (createPedidoDto.idUsuario != userId) {
       throw new BadRequestException(
-        'Producto idUsuario must be the same as the authenticated user',
+        'idUsuario must be the same as the authenticated user',
       )
     }
     return await this.pedidosService.create(createPedidoDto)
-  } */
+  }
 
-  /* async updatePedido(
+  async updatePedido(
     id: string,
     updatePedidoDto: UpdatePedidoDto,
     userId: number,
@@ -189,7 +190,7 @@ export class UsersService {
     )
     if (updatePedidoDto.idUsuario != userId) {
       throw new BadRequestException(
-        'Producto idUsuario must be the same as the authenticated user',
+        'idUsuario must be the same as the authenticated user',
       )
     }
     const pedido = await this.pedidosService.findOne(id)
@@ -211,7 +212,6 @@ export class UsersService {
     }
     return await this.pedidosService.remove(idPedido)
   }
- */
   private async findByEmail(email: string) {
     this.logger.log(`findByEmail: ${email}`)
     return await this.usuariosRepository.findOneBy({ email })

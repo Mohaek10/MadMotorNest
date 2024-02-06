@@ -8,8 +8,9 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Vehiculo } from '../vehiculos/entities/vehiculo.entity'
 import { CacheModule } from '@nestjs/cache-manager'
 import { Pieza } from '../pieza/entities/pieza.entity'
-import { Usuario } from '../../users/entities/user.entity'
+import { Usuario } from '../users/entities/user.entity'
 import { PedidosMapper } from './mappers/pedidos.mapper'
+import { UsersModule } from '../users/users.module'
 
 @Module({
   imports: [
@@ -30,6 +31,6 @@ import { PedidosMapper } from './mappers/pedidos.mapper'
   ],
   controllers: [PedidosController],
   providers: [PedidosService, PedidosMapper],
-  exports: [PedidosModule],
+  exports: [PedidosModule, PedidosService],
 })
 export class PedidosModule {}

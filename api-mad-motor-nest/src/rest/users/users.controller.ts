@@ -17,8 +17,8 @@ import { UsersService } from './users.service'
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-/* import { CreatePedidoDto } from '../pedidos/dto/create-pedido.dto'
-import { UpdatePedidoDto } from '../pedidos/dto/update-pedido.dto' */
+import { CreatePedidoDto } from '../pedidos/dto/create-pedido.dto'
+import { UpdatePedidoDto } from '../pedidos/dto/update-pedido.dto'
 import { Roles, RolesAuthGuard } from '../auth/guards/roles-auth.guard'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 
@@ -84,7 +84,7 @@ export class UsersController {
     return await this.usersService.update(request.user.id, updateUserDto, false)
   }
 
-  /* @Get('me/pedidos')
+  @Get('me/pedidos')
   async getPedidos(@Req() request: any) {
     return await this.usersService.getPedidos(request.user.id)
   }
@@ -131,5 +131,5 @@ export class UsersController {
   async removePedido(@Param('id') id: string, @Req() request: any) {
     this.logger.log(`Eliminando pedido con id ${id}`)
     await this.usersService.removePedido(id, request.user.id)
-  } */
+  }
 }

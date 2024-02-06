@@ -1,6 +1,7 @@
 import {IsBoolean, IsNotEmpty, IsNumber, IsString, Length, Min} from "class-validator";
 
 export class CreatePiezaDto {
+<<<<<<< Updated upstream
     @IsNotEmpty()
     @IsString()
     @Length(2, 100, {
@@ -29,3 +30,12 @@ export class CreatePiezaDto {
     stock?: number
     isDeleted?:boolean
 }
+=======
+  nombre?: string
+  descripcion?: string
+  imagen?: string
+  precio?: number
+  stock?: number
+  isDeleted?: boolean
+}
+>>>>>>> Stashed changes
