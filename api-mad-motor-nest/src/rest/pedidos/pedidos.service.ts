@@ -139,6 +139,8 @@ export class PedidosService {
       if (linea.idPieza) {
         const id = linea.idPieza
         const pieza = await this.piezaRepo.findOne({ where: { id } })
+        const precioPieza: number = Number(pieza.precio)
+        const precioLinea: number = Number(linea.precioPieza)
         if (!pieza) {
           throw new BadRequestException(
             `La pieza con id ${linea.idPieza} no existe`,
@@ -149,7 +151,7 @@ export class PedidosService {
             `No hay suficiente stock para la pieza con id ${linea.idPieza}`,
           )
         }
-        if (linea.precioPieza !== pieza.precio) {
+        if (precioPieza !== precioLinea) {
           throw new BadRequestException(
             `El precio de la pieza con id ${linea.idPieza} no coincide`,
           )
@@ -160,6 +162,7 @@ export class PedidosService {
 
   private async restarStock(pedido: Pedido) {
     this.logger.log(`Restando stock del pedido: ${JSON.stringify(pedido)}`)
+    let sumaDeCadaLinea = 0
     for (const linea of pedido.lineasDePedido) {
       if (linea.idVehiculo) {
         const id = linea.idVehiculo
@@ -171,27 +174,55 @@ export class PedidosService {
         this.logger.log(
           `Calculando precio de la linea${typeof linea.cantidadVehiculo} ${typeof precioVehiculo} ${typeof linea.precioVehiculo}`,
         )
+        if (isNaN(linea.cantidadVehiculo) || isNaN(precioVehiculo)) {
+          throw new BadRequestException(
+            'La cantidad o el precio del vehículo no es un número válido',
+          )
+        }
         linea.precioVehiculo = precioVehiculo * linea.cantidadVehiculo
       }
       if (linea.idPieza) {
         const id = linea.idPieza
         const pieza = await this.piezaRepo.findOne({ where: { id } })
+        const precioPieza: number = Number(pieza.precio)
         pieza.cantidad -= linea.cantidadPieza
         await this.piezaRepo.save(pieza)
-        linea.precioPieza = pieza.precio * linea.cantidadPieza
+
+        if (isNaN(linea.cantidadPieza) || isNaN(precioPieza)) {
+          throw new BadRequestException(
+            'La cantidad o el precio de la pieza no es un número válido',
+          )
+        }
+
+        linea.precioPieza = precioPieza * linea.cantidadPieza
       }
       if (linea.idVehiculo && linea.idPieza) {
-        linea.precioTotal = linea.precioVehiculo + linea.precioPieza
+        this.logger.log(
+          ` Calculando precio total de la linea sumando vehiculo y pieza ${linea.precioVehiculo} y ${linea.precioPieza} respectivamente`,
+        )
+        const precioVehicle: number = Number(linea.precioVehiculo)
+        const precioPiece: number = Number(linea.precioPieza)
+
+        linea.precioTotal = precioVehicle + precioPiece
+        sumaDeCadaLinea += linea.precioTotal
       } else if (linea.idVehiculo) {
+        this.logger.log(
+          ` Calculando precio total de la linea sumando vehiculo ${linea.precioVehiculo}`,
+        )
         linea.precioTotal = linea.precioVehiculo
+        sumaDeCadaLinea += linea.precioTotal
       } else if (linea.idPieza) {
+        this.logger.log(
+          ` Calculando precio total de la linea sumando pieza ${linea.precioPieza}`,
+        )
         linea.precioTotal = linea.precioPieza
+        sumaDeCadaLinea += linea.precioTotal
       }
     }
-    pedido.totalPedido = pedido.lineasDePedido.reduce(
-      (acc, linea) => acc + linea.precioTotal,
-      0,
+    this.logger.log(
+      `Calculando precio total del pedido ${JSON.stringify(pedido)}`,
     )
+    pedido.totalPedido = sumaDeCadaLinea
   }
 
   private async devolverStock(pedido: Pedido) {
