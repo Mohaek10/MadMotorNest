@@ -5,4 +5,5 @@ export class CreatePiezaDto {
     precio?: number
     stock?: number
     isDeleted?:boolean
+
 }
