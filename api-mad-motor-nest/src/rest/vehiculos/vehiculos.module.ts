@@ -14,7 +14,9 @@ import { NotificationModule } from '../../notification/notification.module'
   imports: [
     TypeOrmModule.forFeature([Vehiculo]),
     TypeOrmModule.forFeature([Categoria]),
-    CacheModule.register(),
+    CacheModule.register({
+      ttl: 60000,
+    }),
     StorageModule,
     NotificationModule,
   ],

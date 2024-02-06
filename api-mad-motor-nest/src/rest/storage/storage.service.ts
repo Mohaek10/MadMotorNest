@@ -5,7 +5,7 @@ import * as path from 'path'
 
 @Injectable()
 export class StorageService {
-  private readonly fichero = process.env.filesDir || './uploads'
+  private readonly fichero = process.env.FILESDIR || './uploads'
   private readonly logger = new Logger(StorageService.name)
   private readonly isDev = process.env.NODE_ENV === 'dev'
 
@@ -31,7 +31,7 @@ export class StorageService {
   }
   encontrarFichero(nombreFich: string): string {
     this.logger.log(`Buscando fichero ${nombreFich}`)
-    const fichero = path.join(process.cwd(), process.env.filesDir, nombreFich)
+    const fichero = path.join(process.cwd(), process.env.FILESDIR, nombreFich)
     if (fs.existsSync(fichero)) {
       this.logger.log(`Fichero encontrado ${nombreFich}`)
       return fichero
@@ -41,7 +41,7 @@ export class StorageService {
   }
   borraFichero(nombreFich: string) {
     this.logger.log(`Borrando fichero ${nombreFich}`)
-    const file = path.join(process.cwd(), process.env.filesDir, nombreFich)
+    const file = path.join(process.cwd(), process.env.FILESDIR, nombreFich)
     this.logger.log(`Fichero a borrar ${file}`)
     if (fs.existsSync(file)) {
       fs.unlinkSync(file)

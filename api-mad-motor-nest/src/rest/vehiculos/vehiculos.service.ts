@@ -81,7 +81,7 @@ export class VehiculosService {
     await this.cacheManager.set(
       `vehiculos_${hash(JSON.stringify(query))}`,
       resutado,
-      800000,
+      60000,
     )
     return resutado
   }
@@ -105,14 +105,14 @@ export class VehiculosService {
       throw new NotFoundException(`No se encontro vehiculo con id ${id}`)
     }
     const vehiculo = this.vehiculoMapper.toResponseVehiculoDto(buildVehiculo)
-    await this.cacheManager.set(`vehiculo_${id}`, vehiculo, 800000)
+    await this.cacheManager.set(`vehiculo_${id}`, vehiculo, 60000)
     return vehiculo
   }
 
   async create(
     createVehiculoDto: CreateVehiculoDto,
   ): Promise<ResponseVehiculoDto> {
-    this.logger.log('Creando vehiculo : ' + JSON.stringify(createVehiculoDto))
+    this.logger.log(`Creando vehiculo : ${JSON.stringify(createVehiculoDto)}`)
     const categoria = await this.comprobarCategoria(createVehiculoDto.categoria)
     const vehiculo = this.vehiculoMapper.toVehiculo(
       createVehiculoDto,
@@ -129,7 +129,7 @@ export class VehiculosService {
     id: number,
     updateVehiculoDto: UpdateVehiculoDto,
   ): Promise<ResponseVehiculoDto> {
-    this.logger.log('Actualizando vehiculo : ' + JSON.stringify(id))
+    this.logger.log(`Actualizando vehiculo : ${JSON.stringify(id)}`)
     const vehiculoToUpdate = this.vehiculoExists(id)
     let categoria: Categoria
     if (updateVehiculoDto.categoria) {
@@ -152,13 +152,13 @@ export class VehiculosService {
   }
 
   async remove(id: number): Promise<Vehiculo> {
-    this.logger.log('Eliminando vehiculo : ' + id)
+    this.logger.log(`Eliminando vehiculo : ${id}`)
     const vehiculo = this.vehiculoExists(id)
     return await this.vehiculoRepository.remove(await vehiculo)
   }
 
   async borradoLogico(id: number): Promise<ResponseVehiculoDto> {
-    this.logger.log('Eliminando vehiculo : ' + id)
+    this.logger.log(`Eliminando vehiculo : ${id}`)
     const vehiculo = await this.vehiculoExists(id)
     vehiculo.isDeleted = true
     const vehiculoBorrado = await this.vehiculoRepository.save(vehiculo)
@@ -174,7 +174,7 @@ export class VehiculosService {
     req: Request,
     conUrl: boolean,
   ) {
-    this.logger.log('Actualizando imagen de vehiculo : ' + id)
+    this.logger.log(`Actualizando imagen de vehiculo : ${id}`)
     let vehiculo: Vehiculo
     try {
       vehiculo = await this.vehiculoExists(id)
@@ -189,7 +189,7 @@ export class VehiculosService {
       } catch (e) {
         this.logger.warn('No se pudo eliminar imagen anterior')
         throw new BadRequestException(
-          'No se pudo eliminar imagen anterior : ' + e.message,
+          `No se pudo eliminar imagen anterior : ${e.message}`,
         )
       }
     }
@@ -210,7 +210,7 @@ export class VehiculosService {
     }
 
     vehiculo.image = file.filename
-    this.logger.log('Guardando imagen: ' + filePath)
+    this.logger.log(`Guardando imagen: ${filePath}`)
     await this.vehiculoRepository.save(vehiculo)
     await this.invalidateCacheKey('vehiculos')
     vehiculo.image = filePath
