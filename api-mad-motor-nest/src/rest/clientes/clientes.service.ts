@@ -19,6 +19,9 @@ import {
   paginate,
   PaginateQuery,
 } from 'nestjs-paginate'
+import { hash } from 'typeorm/util/StringUtils'
+import { ResponseClienteDto } from './dto/response-cliente.dto'
+import { StorageService } from '../storage/storage.service'
 
 @Injectable()
 export class ClientesService {
@@ -28,6 +31,7 @@ export class ClientesService {
     private readonly clienteRepository: Repository<Cliente>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly mapper: ClientesMapper,
+    private readonly storageService: StorageService,
   ) {}
   async create(createClienteDto: CreateClienteDto) {
     this.logger.log('Guardando cliente en la base de datos')
@@ -41,11 +45,21 @@ export class ClientesService {
     } else {
       const newCliente = this.mapper.toCliente(createClienteDto)
       const cliente = await this.clienteRepository.save(newCliente)
+      await this.cacheManager.del('all_clientes')
       return this.mapper.toClienteResponse(cliente)
     }
   }
   async findAll(query: PaginateQuery) {
     this.logger.log(`Buscando Clientes con query ${JSON.stringify(query)} `)
+    const cache = await this.cacheManager.get(
+      `all_clientes_page_${hash(JSON.stringify(query))}`,
+    )
+
+    if (cache) {
+      this.logger.log('clientes encontrados en cache')
+      return cache
+    }
+
     const result = await paginate(query, this.clienteRepository, {
       sortableColumns: ['nombre', 'apellido', 'direccion', 'codigoPostal'],
       defaultSortBy: [['nombre', 'DESC']],
@@ -57,11 +71,24 @@ export class ClientesService {
         codigoPostal: [FilterOperator.EQ, FilterSuffix.NOT],
       },
     })
+    await this.cacheManager.set(
+      `all_clientes_page_${hash(JSON.stringify(query))}`,
+      result,
+      60,
+    )
     return result
   }
   async findOne(id: number) {
     this.logger.log(`Buscando cliente con id ${id}`)
+    const cache: ResponseClienteDto = await this.cacheManager.get(
+      `clientes_${id}`,
+    )
+    if (cache) {
+      this.logger.log(`cliente con id ${id} encontrado en cache`)
+      return cache
+    }
     const cliente = await this.searchById(id)
+    await this.cacheManager.set(`clientes_${id}`, cliente, 60)
     return this.mapper.toClienteResponse(cliente)
   }
   async update(id: number, updateClienteDto: UpdateClienteDto) {
@@ -73,6 +100,8 @@ export class ClientesService {
     const update = this.mapper.toClienteUpdate(updateClienteDto, toUpdate)
     this.logger.log(`Cliente actualizado ${JSON.stringify(update)}`)
     const cliente = await this.clienteRepository.save(update)
+    await this.cacheManager.del('all_clientes')
+    await this.cacheManager.del(`clientes_${id}`)
     return this.mapper.toClienteResponse(cliente)
   }
 
@@ -80,6 +109,8 @@ export class ClientesService {
     this.logger.log(`Eliminando cliente con id ${id}`)
     const toDelete = await this.searchById(id)
     this.logger.log(`Empezando a eliminar cliente ${JSON.stringify(toDelete)}`)
+    await this.cacheManager.del('all_clientes')
+    await this.cacheManager.del(`clientes_${id}`)
     const cliente = await this.clienteRepository.remove(toDelete)
     this.logger.log(`Cliente eliminado`)
     return this.mapper.toClienteResponse(cliente)
@@ -95,4 +126,10 @@ export class ClientesService {
       throw new NotFoundException(`No existe el cliente con id ${id}`)
     }
   }
+  // public async updateImage(
+  //   id: number,
+  //   file: Express.Multer.File,
+  //   request: Request,
+  //   withUrl: boolean = true,
+  // ){}
 }

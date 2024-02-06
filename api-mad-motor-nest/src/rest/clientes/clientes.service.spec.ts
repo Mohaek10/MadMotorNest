@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { ClientesService } from './clientes.service'
-import { createQueryBuilder, Repository } from 'typeorm'
+import { Repository } from 'typeorm'
 import { Cliente } from './entities/cliente.entity'
 import { ClientesMapper } from './mapper/clientes.mapper'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
@@ -12,7 +12,6 @@ import { UpdateClienteDto } from './dto/update-cliente.dto'
 import { ResponseClienteDto } from './dto/response-cliente.dto'
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 import { Paginated } from 'nestjs-paginate'
-import { skip, take } from 'rxjs'
 
 describe('ClientesService', () => {
   let service: ClientesService
@@ -36,6 +35,7 @@ describe('ClientesService', () => {
   const cacheManagerMock = {
     get: jest.fn(() => Promise.resolve()),
     set: jest.fn(() => Promise.resolve()),
+    del: jest.fn(() => Promise.resolve()),
     store: {
       keys: jest.fn(),
     },
@@ -121,6 +121,7 @@ describe('ClientesService', () => {
       spyOn(repository, 'findOne').mockResolvedValue(undefined)
       spyOn(mapper, 'toCliente').mockReturnValue(testCliente)
       spyOn(repository, 'save').mockResolvedValue(testCliente)
+      jest.spyOn(cacheManager, 'del').mockResolvedValue(undefined)
       spyOn(mapper, 'toClienteResponse').mockReturnValue(testResponseCliente)
       expect(await service.create(testClienteCreate)).toEqual(
         testResponseCliente,
@@ -150,6 +151,13 @@ describe('ClientesService', () => {
       await expect(service.findOne(889898)).rejects.toThrowError(
         NotFoundException,
       )
+    })
+    it('cache return a cliente', async () => {
+      const testCliente = clienteTest()
+      const testResponseCliente = clienteTestResponse()
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(testCliente)
+      spyOn(mapper, 'toClienteResponse').mockReturnValue(testResponseCliente)
+      expect(await service.findOne(1)).toEqual(testResponseCliente)
     })
   })
   describe('Update', () => {
@@ -221,7 +229,44 @@ describe('ClientesService', () => {
       jest
         .spyOn(repoTestForFindAll, 'createQueryBuilder')
         .mockReturnValue(mockQueryBuilder as any)
-
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(undefined)
+      jest.spyOn(cacheManager, 'set').mockResolvedValue(undefined)
+      const result: any = await service.findAll(paginateOptions)
+      expect(result.meta.itemsPerPage).toEqual(paginateOptions.limit)
+      expect(result.meta.currentPage).toEqual(paginateOptions.page)
+      expect(result.meta.totalPages).toEqual(1)
+      expect(result.links.current).toEqual(
+        `clientes?page=${paginateOptions.page}&limit=${paginateOptions.limit}&sortBy=nombre:DESC`,
+      )
+    })
+    it('should return a list of clientes with cache', async () => {
+      const paginateOptions = {
+        page: 1,
+        limit: 10,
+        path: 'clientes',
+      }
+      const testClientes = {
+        data: [],
+        meta: {
+          itemsPerPage: 10,
+          totalItems: 1,
+          currentPage: 1,
+          totalPages: 1,
+        },
+        links: {
+          current: 'clientes?page=1&limit=10&sortBy=nombre:DESC',
+        },
+      } as Paginated<Cliente>
+      const mockQueryBuilder = {
+        take: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        addOrderBy: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValue([testClientes, 1]),
+      }
+      jest
+        .spyOn(repoTestForFindAll, 'createQueryBuilder')
+        .mockReturnValue(mockQueryBuilder as any)
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(testClientes)
       const result: any = await service.findAll(paginateOptions)
       expect(result.meta.itemsPerPage).toEqual(paginateOptions.limit)
       expect(result.meta.currentPage).toEqual(paginateOptions.page)

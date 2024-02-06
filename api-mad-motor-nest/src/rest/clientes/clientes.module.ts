@@ -5,10 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Cliente } from './entities/cliente.entity'
 import { CacheModule } from '@nestjs/cache-manager'
 import { ClientesMapper } from './mapper/clientes.mapper'
+import { StorageModule } from '../storage/storage.module'
+import { StorageService } from "../storage/storage.service";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Cliente]), CacheModule.register()],
+  imports: [
+    TypeOrmModule.forFeature([Cliente]),
+    CacheModule.register(),
+  ],
   controllers: [ClientesController],
-  providers: [ClientesService, ClientesMapper],
+  providers: [ClientesService, ClientesMapper, StorageService],
 })
 export class ClientesModule {}
