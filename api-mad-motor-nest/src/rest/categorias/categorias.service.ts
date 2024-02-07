@@ -53,7 +53,6 @@ export class CategoriasService {
         activa: [FilterOperator.EQ, FilterSuffix.NOT],
       },
     })
-    console.log(res)
     await this.managerCache.set(
       `all_categorias_page_${hash(JSON.stringify(query))}`,
       res,
