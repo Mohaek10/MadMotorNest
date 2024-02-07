@@ -29,7 +29,7 @@ export class PersonalService {
   async create(
     createPersonalDto: CreatePersonalDto,
   ): Promise<ResponsePersonalDto> {
-    this.logger.log('Creando personal: ' + JSON.stringify(createPersonalDto))
+    this.logger.log(`Creando personal: ${JSON.stringify(createPersonalDto)}`)
     const personal = this.personalMapper.toEntity(createPersonalDto)
     const personalCreado = await this.personalRepository.save(personal)
     const res = this.personalMapper.toResponseDto(personalCreado)
