@@ -61,6 +61,7 @@ describe('PiezaService', () => {
     mapper=module.get<PiezaMapper>(PiezaMapper)
   })
 
+
   describe('findAll', () => {
     it('debería devolver una página de piezas', async () => {
       const paginateOptions = {
@@ -208,7 +209,7 @@ describe('PiezaService', () => {
       const createPiezaDto: CreatePiezaDto = {
         nombre: 'test',
         precio: 2,
-        stock: 3,
+        cantidad: 3,
         descripcion: 'test',
         imagen: 'test',
       }
