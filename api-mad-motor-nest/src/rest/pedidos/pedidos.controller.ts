@@ -11,6 +11,7 @@ import {
 import { PedidosService } from './pedidos.service'
 import { CreatePedidoDto } from './dto/create-pedido.dto'
 import { UpdatePedidoDto } from './dto/update-pedido.dto'
+import { ObjectIdPipe } from './pipes/object-id.pipe'
 
 @Controller('pedidos')
 export class PedidosController {
@@ -27,7 +28,7 @@ export class PedidosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ObjectIdPipe) id: string) {
     return this.pedidosService.findOne(id)
   }
 
@@ -37,12 +38,15 @@ export class PedidosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePedidoDto: UpdatePedidoDto) {
+  update(
+    @Param('id', ObjectIdPipe) id: string,
+    @Body() updatePedidoDto: UpdatePedidoDto,
+  ) {
     return this.pedidosService.update(id, updatePedidoDto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ObjectIdPipe) id: string) {
     return this.pedidosService.remove(id)
   }
 }

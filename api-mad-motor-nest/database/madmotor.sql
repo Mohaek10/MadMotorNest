@@ -52,7 +52,7 @@ INSERT INTO "pieza" ("id", "nombre", "precio", "descripcion", "cantidad", "image
 
 DROP TABLE IF EXISTS "user_roles";
 DROP SEQUENCE IF EXISTS user_roles_id_seq;
-CREATE SEQUENCE user_roles_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 2 CACHE 1;
+CREATE SEQUENCE user_roles_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 3 CACHE 1;
 
 CREATE TABLE "public"."user_roles" (
     "id" integer DEFAULT nextval('user_roles_id_seq') NOT NULL,
@@ -66,7 +66,7 @@ INSERT INTO "user_roles" ("id", "role", "user_id") VALUES
 
 DROP TABLE IF EXISTS "usuarios";
 DROP SEQUENCE IF EXISTS usuarios_id_seq;
-CREATE SEQUENCE usuarios_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+CREATE SEQUENCE usuarios_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 2 CACHE 1;
 
 CREATE TABLE "public"."usuarios" (
     "id" bigint DEFAULT nextval('usuarios_id_seq') NOT NULL,
@@ -88,7 +88,7 @@ INSERT INTO "usuarios" ("id", "nombre", "apellidos", "email", "username", "passw
 
 DROP TABLE IF EXISTS "vehiculos";
 DROP SEQUENCE IF EXISTS vehiculos_id_seq;
-CREATE SEQUENCE vehiculos_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+CREATE SEQUENCE vehiculos_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 2 CACHE 1;
 
 CREATE TABLE "public"."vehiculos" (
     "id" bigint DEFAULT nextval('vehiculos_id_seq') NOT NULL,
