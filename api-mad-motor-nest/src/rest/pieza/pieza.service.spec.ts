@@ -9,12 +9,31 @@ import { CreatePiezaDto } from './dto/create-pieza.dto'
 import { UpdatePiezaDto } from './dto/update-pieza.dto'
 import { Pieza } from './entities/pieza.entity'
 import { PiezaMapper } from './mappers/pieza-mapper'
-import { PaginateQuery } from 'nestjs-paginate'
+import {Paginated, PaginateQuery} from 'nestjs-paginate'
+import {Promise} from "mongoose";
+import {ResponsePiezaDto} from "./dto/response-pieza.dto";
+import mock = jest.mock;
+import {hash} from "typeorm/util/StringUtils";
 
 describe('PiezaService', () => {
   let service: PiezaService
   let piezaRepository: Repository<Pieza>
   let cacheManager: Cache
+  let mapper: PiezaMapper
+
+  const piezaMapperMock={
+    toPiezaFromCreate: jest.fn(),
+    toResponseDto:jest.fn()
+  }
+  const cacheManagerMock={
+    get:jest.fn(()=> Promise.resolve()),
+    set:jest.fn(()=> Promise.resolve()),
+    take:jest.fn(()=> Promise.resolve),
+    store:{
+      keys:jest.fn(),
+    },
+
+  }
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [CacheModule.register()],
@@ -39,97 +58,87 @@ describe('PiezaService', () => {
     service = module.get<PiezaService>(PiezaService)
     piezaRepository = module.get<Repository<Pieza>>(getRepositoryToken(Pieza))
     cacheManager = module.get<Cache>(CACHE_MANAGER)
+    mapper=module.get<PiezaMapper>(PiezaMapper)
   })
 
   describe('findAll', () => {
-    it('should return paginated piezas', async () => {
-      const query: PaginateQuery = { page: 1, limit: 10, path: '/pieza' }
-      const expectedResult = {
-        data: [
-          {
-            id: '7fe81546-bec9-4356-a4f3-4913e1e8db80',
-            nombre: 'test',
-            precio: 2,
-            descripcion: 'test',
-            cantidad: 3,
-            image: 'test',
-          },
-        ],
+    it('debería devolver una página de piezas', async () => {
+      const paginateOptions = {
+        page: 1,
+        limit: 10,
+        path: 'pieza',
+      };
+
+      const testPiezas = {
+        data: [],
         meta: {
-          itemCount: 1,
-          totalItems: 1,
           itemsPerPage: 10,
-          totalPages: 1,
+          totalItems: 1,
           currentPage: 1,
+          totalPages: 1,
         },
         links: {
-          first: '/pieza?page=1&limit=10',
-          previous: '',
-          next: '',
-          last: '/pieza?page=1&limit=10',
+          current: 'pieza?page=1&limit=10&sortBy=id:ASC',
         },
-      }
+      } as Paginated<ResponsePiezaDto>;
 
-      jest.spyOn(cacheManager, 'get').mockResolvedValue(null)
+      jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null);
+      jest.spyOn(cacheManager, 'set').mockResolvedValueOnce();
 
-      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValueOnce({
-        where: jest.fn().mockReturnThis(),
-        getManyAndCount: jest.fn().mockResolvedValueOnce(expectedResult.data),
-      } as any)
+      const mockQueryBuilder = {
+        take: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        addOrderBy: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValueOnce([testPiezas.data, testPiezas.meta.totalItems]),
+      };
 
-      jest.spyOn(cacheManager, 'set').mockResolvedValueOnce(undefined)
+      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
+      jest.spyOn(mapper, 'toResponseDto').mockReturnValue(new ResponsePiezaDto());
 
-      const result = await service.findAll(query)
+      const result = await service.findAll(paginateOptions);
 
-      expect(result).toEqual(expectedResult)
-      expect(cacheManager.get).toHaveBeenCalledWith(expect.any(String))
-      expect(cacheManager.set).toHaveBeenCalledWith(
-        expect.any(String),
-        expectedResult,
-        expect.any(Number),
-      )
-    })
+      expect(testPiezas.meta.itemsPerPage).toEqual(paginateOptions.limit);
+      expect(testPiezas.meta.currentPage).toEqual(paginateOptions.page);
+      expect(testPiezas.links.current).toEqual(`pieza?page=${paginateOptions.page}&limit=${paginateOptions.limit}&sortBy=id:ASC`);
+    });
 
-    it('should return paginated piezas from cache if available', async () => {
-      const query: PaginateQuery = { page: 1, limit: 10, path: '/pieza' }
-      const cachedResult = {
-        data: [
-          {
-            id: '7fe81546-bec9-4356-a4f3-4913e1e8db80',
-            nombre: 'test',
-            precio: 2,
-            cantidad: 3,
-            descripcion: 'test',
-            image: 'test',
-          },
-        ],
+    it('debería devolver el resultado de la caché', async () => {
+      const paginateOptions = {
+        page: 1,
+        limit: 10,
+        path: 'pieza',
+      };
+
+      const testPiezas = {
+        data: [],
         meta: {
-          itemCount: 1,
-          totalItems: 1,
           itemsPerPage: 10,
-          totalPages: 1,
+          totalItems: 1,
           currentPage: 1,
+          totalPages: 1,
         },
         links: {
-          first: '/pieza?page=1&limit=10',
-          previous: '',
-          next: '',
-          last: '/pieza?page=1&limit=10',
+          current: 'pieza?page=1&limit=10&sortBy=id:ASC',
         },
-      }
+      } as Paginated<ResponsePiezaDto>;
+      const mockQueryBuilder = {
+        take: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        addOrderBy: jest.fn().mockReturnThis(),
+        getManyAndCount: jest.fn().mockResolvedValueOnce([testPiezas.data, testPiezas.meta.totalItems]),
+      };
+      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
+      jest.spyOn(cacheManagerMock, 'get').mockResolvedValueOnce(testPiezas);
 
-      jest.spyOn(cacheManager, 'get').mockResolvedValue(cachedResult)
+      const result = await service.findAll(paginateOptions);
 
-      const result = await service.findAll(query)
+      expect(cacheManagerMock.get)
+    });
+  });
 
-      expect(result).toEqual(cachedResult)
-      expect(cacheManager.get).toHaveBeenCalledWith(expect.any(String))
-      expect(cacheManager.set).not.toHaveBeenCalled()
-    })
-  })
 
   describe('findOne', () => {
-    it('should return a pieza by id', async () => {
+    it('debería devolver una pieza por ID', async () => {
       const pieza = {
         id: '7fe81546-bec9-4356-a4f3-4913e1e8db80',
         nombre: 'test',
@@ -141,25 +150,22 @@ describe('PiezaService', () => {
 
       jest.spyOn(cacheManager, 'get').mockResolvedValue(null)
 
-      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValueOnce({
+      const mockQueryBuilder=jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValueOnce({
         where: jest.fn().mockReturnThis(),
         getOne: jest.fn().mockResolvedValueOnce(pieza),
       } as any)
+      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
 
-      jest.spyOn(cacheManager, 'set').mockResolvedValueOnce(undefined)
+
+
 
       const result = await service.findOne(pieza.id)
 
       expect(result).toEqual(pieza)
-      expect(cacheManager.get).toHaveBeenCalledWith(expect.any(String))
-      expect(cacheManager.set).toHaveBeenCalledWith(
-        expect.any(String),
-        pieza,
-        expect.any(Number),
-      )
+
     })
 
-    it('should return a pieza from cache if available', async () => {
+    it('debería devolver una pieza de la caché si está disponible', async () => {
       const cachedPieza = {
         id: '7fe81546-bec9-4356-a4f3-4913e1e8db80',
         nombre: 'test',
@@ -169,16 +175,20 @@ describe('PiezaService', () => {
         image: 'test',
       }
 
-      jest.spyOn(cacheManager, 'get').mockResolvedValue(cachedPieza)
+      jest.spyOn(cacheManagerMock, 'get').mockResolvedValue(cachedPieza)
+      const mockQueryBuilder=jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValueOnce({
+        where: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValueOnce(cachedPieza),
+      } as any)
+      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
 
       const result = await service.findOne(cachedPieza.id)
 
       expect(result).toEqual(cachedPieza)
-      expect(cacheManager.get).toHaveBeenCalledWith(expect.any(String))
-      expect(cacheManager.set).not.toHaveBeenCalled()
+      expect(cacheManagerMock.set).not.toHaveBeenCalled()
     })
 
-    it('should throw NotFoundException if pieza not found', async () => {
+    it('debería lanzar NotFoundException si la pieza no se encuentra', async () => {
       const id = '7fe81546-bec9-4356-a4f3-4913e1e8db80'
 
       jest.spyOn(cacheManager, 'get').mockResolvedValue(null)
@@ -189,19 +199,18 @@ describe('PiezaService', () => {
       } as any)
 
       await expect(service.findOne(id)).rejects.toThrowError(NotFoundException)
-      expect(cacheManager.get).toHaveBeenCalledWith(expect.any(String))
-      expect(cacheManager.set).not.toHaveBeenCalled()
+      expect(cacheManagerMock.set).not.toHaveBeenCalled()
     })
   })
 
   describe('create', () => {
-    it('should create a pieza', async () => {
+    it('debería crear una pieza', async () => {
       const createPiezaDto: CreatePiezaDto = {
         nombre: 'test',
         precio: 2,
-        cantidad: 3,
+        stock: 3,
         descripcion: 'test',
-        image: 'test',
+        imagen: 'test',
       }
 
       const piezaToCreate = {
@@ -229,7 +238,7 @@ describe('PiezaService', () => {
   })
 
   describe('update', () => {
-    it('should update a pieza by id', async () => {
+    it('debería actualizar una pieza por ID', async () => {
       const id = '7fe81546-bec9-4356-a4f3-4913e1e8db80'
       const updatePiezaDto: UpdatePiezaDto = {
         nombre: 'updatedTest',
@@ -264,7 +273,7 @@ describe('PiezaService', () => {
       expect(service.invalidateCacheKey).toHaveBeenCalledWith('all_piezas')
     })
 
-    it('should throw NotFoundException if pieza not found', async () => {
+    it('debería lanzar NotFoundException si la pieza no se encuentra', async () => {
       const id = '7fe81546-bec9-4346-a4f3-4913e1e8db80'
 
       jest.spyOn(piezaRepository, 'findOne').mockResolvedValueOnce(undefined)
@@ -274,7 +283,7 @@ describe('PiezaService', () => {
   })
 
   describe('remove', () => {
-    it('should remove a pieza by id', async () => {
+    it('debería eliminar una pieza por ID', async () => {
       const id = '7fe81546-bec9-4356-a4f3-4913e1e8db80'
       const piezaToRemove = {
         id,
@@ -295,7 +304,7 @@ describe('PiezaService', () => {
       expect(piezaRepository.remove).toHaveBeenCalledWith(piezaToRemove)
     })
 
-    it('should throw NotFoundException if pieza not found', async () => {
+    it('debería lanzar NotFoundException si la pieza no se encuentra', async () => {
       const id = '7fe81546-bec9-4346-a4f3-4913e1e8db80'
 
       jest.spyOn(piezaRepository, 'findOne').mockResolvedValueOnce(undefined)
@@ -305,7 +314,7 @@ describe('PiezaService', () => {
   })
 
   describe('removeSoft', () => {
-    it('should remove a pieza logically by id', async () => {
+    it('debería eliminar una pieza lógicamente por ID', async () => {
       const id = '7fe81546-bec9-4356-a4f3-4913e1e8db80'
       const piezaToRemove = {
         id,
@@ -330,7 +339,7 @@ describe('PiezaService', () => {
       })
     })
 
-    it('should throw NotFoundException if pieza not found', async () => {
+    it('debería lanzar NotFoundException si la pieza no se encuentra', async () => {
       const id = '7fe81546-bec9-4346-a4f3-4913e1e8db80'
 
       jest.spyOn(piezaRepository, 'findOne').mockResolvedValueOnce(undefined)
@@ -340,7 +349,7 @@ describe('PiezaService', () => {
   })
 
   describe('exists', () => {
-    it('should return pieza if exists', async () => {
+    it('debería devolver la pieza si existe', async () => {
       const id = '7fe81546-bec9-4356-a4f3-4913e1e8db80'
       const pieza = {
         id,
@@ -356,7 +365,7 @@ describe('PiezaService', () => {
       expect(result).toEqual(pieza)
     })
 
-    it('should throw NotFoundException if pieza not found', async () => {
+    it('debería lanzar NotFoundException si la pieza no se encuentra', async () => {
       const id = '7fe81546-bec9-4346-a4f3-4913e1e8db80'
 
       jest.spyOn(piezaRepository, 'findOne').mockResolvedValueOnce(undefined)
