@@ -46,15 +46,15 @@ export class VehiculosController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateVehiculoDto: UpdateVehiculoDto,
   ) {
-    return this.vehiculosService.update(+id, updateVehiculoDto)
+    return this.vehiculosService.update(id, updateVehiculoDto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.vehiculosService.remove(+id)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.vehiculosService.borradoLogico(id)
   }
 
   @Patch('imagen/:id')
@@ -78,7 +78,7 @@ export class VehiculosController {
     }),
   )
   async actualizarImagenVehiculo(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
   ) {
