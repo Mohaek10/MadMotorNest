@@ -26,6 +26,6 @@ export class CreatePiezaDto {
   @IsNotEmpty()
   @IsNumber()
   @Min(0)
-  stock?: number
+  cantidad?: number
   isDeleted?: boolean
 }

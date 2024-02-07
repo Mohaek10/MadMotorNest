@@ -6,6 +6,6 @@ export class ResponsePiezaDto {
   descripcion: string
   imagen: string
   precio: number
-  stock: number
+  cantidad: number
   isDeleted: boolean
 }
