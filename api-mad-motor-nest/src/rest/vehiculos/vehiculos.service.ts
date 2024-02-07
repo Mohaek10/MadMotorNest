@@ -258,4 +258,8 @@ export class VehiculosService {
     )
     this.notificacionService.sendMessage(notificacion)
   }
+  //Metodos para test unitarios
+  async comprobarCategoriaTest(nombreCate: string): Promise<Categoria> {
+    return await this.comprobarCategoria(nombreCate)
+  }
 }
