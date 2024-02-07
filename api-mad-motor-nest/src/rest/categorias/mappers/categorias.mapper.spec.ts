@@ -29,6 +29,7 @@ describe('CategoriasMapper', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       isDeleted: false,
+      vehiculos: [],
     }
 
     const actualCategoria: Categoria =
@@ -48,6 +49,7 @@ describe('CategoriasMapper', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       isDeleted: true,
+      vehiculos: [],
     }
 
     const actualCategoria: Categoria =
