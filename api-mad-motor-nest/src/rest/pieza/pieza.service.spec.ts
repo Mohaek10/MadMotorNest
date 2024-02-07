@@ -9,11 +9,11 @@ import { CreatePiezaDto } from './dto/create-pieza.dto'
 import { UpdatePiezaDto } from './dto/update-pieza.dto'
 import { Pieza } from './entities/pieza.entity'
 import { PiezaMapper } from './mappers/pieza-mapper'
-import {Paginated, PaginateQuery} from 'nestjs-paginate'
-import {Promise} from "mongoose";
-import {ResponsePiezaDto} from "./dto/response-pieza.dto";
-import mock = jest.mock;
-import {hash} from "typeorm/util/StringUtils";
+import { Paginated, PaginateQuery } from 'nestjs-paginate'
+import { Promise } from 'mongoose'
+import { ResponsePiezaDto } from './dto/response-pieza.dto'
+import mock = jest.mock
+import { hash } from 'typeorm/util/StringUtils'
 
 describe('PiezaService', () => {
   let service: PiezaService
@@ -21,18 +21,17 @@ describe('PiezaService', () => {
   let cacheManager: Cache
   let mapper: PiezaMapper
 
-  const piezaMapperMock={
+  const piezaMapperMock = {
     toPiezaFromCreate: jest.fn(),
-    toResponseDto:jest.fn()
+    toResponseDto: jest.fn(),
   }
-  const cacheManagerMock={
-    get:jest.fn(()=> Promise.resolve()),
-    set:jest.fn(()=> Promise.resolve()),
-    take:jest.fn(()=> Promise.resolve),
-    store:{
-      keys:jest.fn(),
+  const cacheManagerMock = {
+    get: jest.fn(() => Promise.resolve()),
+    set: jest.fn(() => Promise.resolve()),
+    take: jest.fn(() => Promise.resolve),
+    store: {
+      keys: jest.fn(),
     },
-
   }
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -58,9 +57,8 @@ describe('PiezaService', () => {
     service = module.get<PiezaService>(PiezaService)
     piezaRepository = module.get<Repository<Pieza>>(getRepositoryToken(Pieza))
     cacheManager = module.get<Cache>(CACHE_MANAGER)
-    mapper=module.get<PiezaMapper>(PiezaMapper)
+    mapper = module.get<PiezaMapper>(PiezaMapper)
   })
-
 
   describe('findAll', () => {
     it('debería devolver una página de piezas', async () => {
@@ -68,7 +66,7 @@ describe('PiezaService', () => {
         page: 1,
         limit: 10,
         path: 'pieza',
-      };
+      }
 
       const testPiezas = {
         data: [],
@@ -81,34 +79,42 @@ describe('PiezaService', () => {
         links: {
           current: 'pieza?page=1&limit=10&sortBy=id:ASC',
         },
-      } as Paginated<ResponsePiezaDto>;
+      } as Paginated<ResponsePiezaDto>
 
-      jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null);
-      jest.spyOn(cacheManager, 'set').mockResolvedValueOnce();
+      jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null)
+      jest.spyOn(cacheManager, 'set').mockResolvedValueOnce()
 
       const mockQueryBuilder = {
         take: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         addOrderBy: jest.fn().mockReturnThis(),
-        getManyAndCount: jest.fn().mockResolvedValueOnce([testPiezas.data, testPiezas.meta.totalItems]),
-      };
+        getManyAndCount: jest
+          .fn()
+          .mockResolvedValueOnce([testPiezas.data, testPiezas.meta.totalItems]),
+      }
 
-      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
-      jest.spyOn(mapper, 'toResponseDto').mockReturnValue(new ResponsePiezaDto());
+      jest
+        .spyOn(piezaRepository, 'createQueryBuilder')
+        .mockReturnValue(mockQueryBuilder as any)
+      jest
+        .spyOn(mapper, 'toResponseDto')
+        .mockReturnValue(new ResponsePiezaDto())
 
-      const result = await service.findAll(paginateOptions);
+      const result = await service.findAll(paginateOptions)
 
-      expect(testPiezas.meta.itemsPerPage).toEqual(paginateOptions.limit);
-      expect(testPiezas.meta.currentPage).toEqual(paginateOptions.page);
-      expect(testPiezas.links.current).toEqual(`pieza?page=${paginateOptions.page}&limit=${paginateOptions.limit}&sortBy=id:ASC`);
-    });
+      expect(testPiezas.meta.itemsPerPage).toEqual(paginateOptions.limit)
+      expect(testPiezas.meta.currentPage).toEqual(paginateOptions.page)
+      expect(testPiezas.links.current).toEqual(
+        `pieza?page=${paginateOptions.page}&limit=${paginateOptions.limit}&sortBy=id:ASC`,
+      )
+    })
 
     it('debería devolver el resultado de la caché', async () => {
       const paginateOptions = {
         page: 1,
         limit: 10,
         path: 'pieza',
-      };
+      }
 
       const testPiezas = {
         data: [],
@@ -121,22 +127,25 @@ describe('PiezaService', () => {
         links: {
           current: 'pieza?page=1&limit=10&sortBy=id:ASC',
         },
-      } as Paginated<ResponsePiezaDto>;
+      } as Paginated<ResponsePiezaDto>
       const mockQueryBuilder = {
         take: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         addOrderBy: jest.fn().mockReturnThis(),
-        getManyAndCount: jest.fn().mockResolvedValueOnce([testPiezas.data, testPiezas.meta.totalItems]),
-      };
-      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
-      jest.spyOn(cacheManagerMock, 'get').mockResolvedValueOnce(testPiezas);
+        getManyAndCount: jest
+          .fn()
+          .mockResolvedValueOnce([testPiezas.data, testPiezas.meta.totalItems]),
+      }
+      jest
+        .spyOn(piezaRepository, 'createQueryBuilder')
+        .mockReturnValue(mockQueryBuilder as any)
+      jest.spyOn(cacheManagerMock, 'get').mockResolvedValueOnce(testPiezas)
 
-      const result = await service.findAll(paginateOptions);
+      const result = await service.findAll(paginateOptions)
 
       expect(cacheManagerMock.get)
-    });
-  });
-
+    })
+  })
 
   describe('findOne', () => {
     it('debería devolver una pieza por ID', async () => {
@@ -151,19 +160,19 @@ describe('PiezaService', () => {
 
       jest.spyOn(cacheManager, 'get').mockResolvedValue(null)
 
-      const mockQueryBuilder=jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValueOnce({
-        where: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValueOnce(pieza),
-      } as any)
-      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
-
-
-
+      const mockQueryBuilder = jest
+        .spyOn(piezaRepository, 'createQueryBuilder')
+        .mockReturnValueOnce({
+          where: jest.fn().mockReturnThis(),
+          getOne: jest.fn().mockResolvedValueOnce(pieza),
+        } as any)
+      jest
+        .spyOn(piezaRepository, 'createQueryBuilder')
+        .mockReturnValue(mockQueryBuilder as any)
 
       const result = await service.findOne(pieza.id)
 
       expect(result).toEqual(pieza)
-
     })
 
     it('debería devolver una pieza de la caché si está disponible', async () => {
@@ -177,11 +186,15 @@ describe('PiezaService', () => {
       }
 
       jest.spyOn(cacheManagerMock, 'get').mockResolvedValue(cachedPieza)
-      const mockQueryBuilder=jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValueOnce({
-        where: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValueOnce(cachedPieza),
-      } as any)
-      jest.spyOn(piezaRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
+      const mockQueryBuilder = jest
+        .spyOn(piezaRepository, 'createQueryBuilder')
+        .mockReturnValueOnce({
+          where: jest.fn().mockReturnThis(),
+          getOne: jest.fn().mockResolvedValueOnce(cachedPieza),
+        } as any)
+      jest
+        .spyOn(piezaRepository, 'createQueryBuilder')
+        .mockReturnValue(mockQueryBuilder as any)
 
       const result = await service.findOne(cachedPieza.id)
 

@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { PiezaController } from './pieza.controller'
 import { PiezaService } from './pieza.service'
-import {CacheModule} from "@nestjs/cache-manager";
-import {Paginated} from "nestjs-paginate";
-import {ResponsePiezaDto} from "./dto/response-pieza.dto";
-import {NotFoundException} from "@nestjs/common";
-import {CreatePiezaDto} from "./dto/create-pieza.dto";
-import {UpdatePiezaDto} from "./dto/update-pieza.dto";
+import { CacheModule } from '@nestjs/cache-manager'
+import { Paginated } from 'nestjs-paginate'
+import { ResponsePiezaDto } from './dto/response-pieza.dto'
+import { NotFoundException } from '@nestjs/common'
+import { CreatePiezaDto } from './dto/create-pieza.dto'
+import { UpdatePiezaDto } from './dto/update-pieza.dto'
 
 describe('PiezaController', () => {
   let controller: PiezaController
@@ -18,18 +18,18 @@ describe('PiezaController', () => {
     create: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
-    exists:jest.fn()
+    exists: jest.fn(),
   }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports:[CacheModule.register()],
+      imports: [CacheModule.register()],
       controllers: [PiezaController],
-      providers: [{provide: PiezaService,useValue:piezaServiceMock}],
+      providers: [{ provide: PiezaService, useValue: piezaServiceMock }],
     }).compile()
 
     controller = module.get<PiezaController>(PiezaController)
-    service= module.get<PiezaService>(PiezaService)
+    service = module.get<PiezaService>(PiezaService)
   })
 
   it('should be defined', () => {
@@ -63,7 +63,7 @@ describe('PiezaController', () => {
       expect(result.meta.currentPage).toEqual(paginateOptions.page)
       expect(result.meta.totalPages).toEqual(1) // You may need to adjust this value based on your test case
       expect(result.links.current).toEqual(
-          `pieza?page=${paginateOptions.page}&limit=${paginateOptions.limit}&sortBy=id:ASC`,
+        `pieza?page=${paginateOptions.page}&limit=${paginateOptions.limit}&sortBy=id:ASC`,
       )
       expect(service.findAll).toHaveBeenCalled()
     })
@@ -88,15 +88,14 @@ describe('PiezaController', () => {
   describe('create', () => {
     it('deberia crear una pieza', async () => {
       const dto: CreatePiezaDto = {
-        nombre:'test',
-        descripcion:'test',
-        imagen:'test',
-        precio:3,
-        cantidad:3
-
+        nombre: 'test',
+        descripcion: 'test',
+        imagen: 'test',
+        precio: 3,
+        cantidad: 3,
       }
       const mockResult: ResponsePiezaDto = new ResponsePiezaDto()
-      jest.spyOn(service,"findOne").mockResolvedValue(mockResult)
+      jest.spyOn(service, 'findOne').mockResolvedValue(mockResult)
       jest.spyOn(service, 'create').mockResolvedValue(mockResult)
       await controller.create(dto)
       expect(service.create).toHaveBeenCalledWith(dto)
@@ -141,15 +140,16 @@ describe('PiezaController', () => {
 
      */
 
-
-
     it('lanza NotFoundException si la pieza no existe', async () => {
       const id = '1c7e091c-9046-48cd-a698-9dc165a2e0b6'
-      jest.spyOn(service, 'remove').mockRejectedValue(new NotFoundException('Pieza con id 1c7e091c-9046-48cd-a695-9dc165a2e0b6 no encontrado'))
+      jest
+        .spyOn(service, 'remove')
+        .mockRejectedValue(
+          new NotFoundException(
+            'Pieza con id 1c7e091c-9046-48cd-a695-9dc165a2e0b6 no encontrado',
+          ),
+        )
       await expect(controller.remove(id)).rejects.toThrow(NotFoundException)
     })
   })
-
-
-
 })
