@@ -140,6 +140,21 @@ export class CategoriasService {
     return res
   }
 
+  async removeSoft(id: string) {
+    this.logger.log(`Eliminando categoria con ID: ${id}`)
+    const removeCategoria = await this.findOne(id)
+    if (!removeCategoria) {
+      throw new NotFoundException(
+        `La categoria con ID (${id}) no ha sido encontrada.`,
+      )
+    }
+    removeCategoria.isDeleted = true
+    const res = await this.categoriaRepository.save(removeCategoria)
+    await this.invalidateCacheKey(`catgoria_${id}`)
+    await this.invalidateCacheKey('all_categorias')
+    return res
+  }
+
   public async exists(nombreCategoria: string): Promise<Categoria> {
     const cache: Categoria = await this.managerCache.get(
       `categoria_name_${nombreCategoria}`,

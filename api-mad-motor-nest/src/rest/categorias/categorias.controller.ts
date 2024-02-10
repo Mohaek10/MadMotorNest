@@ -55,9 +55,9 @@ export class CategoriasController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(202)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     this.logger.log(`Borrando categoria con ID: ${id}`)
-    await this.categoriasService.remove(id)
+    await this.categoriasService.removeSoft(id)
   }
 }

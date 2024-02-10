@@ -18,6 +18,7 @@ describe('CategoriasController', () => {
     create: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
+    removeSoft: jest.fn(),
   }
 
   beforeEach(async () => {
@@ -132,14 +133,16 @@ describe('CategoriasController', () => {
     it('should remove a categoria', async () => {
       const id = 'a uuid'
       const mockResult: Categoria = new Categoria()
-      jest.spyOn(service, 'remove').mockResolvedValue(mockResult)
+      jest.spyOn(service, 'removeSoft').mockResolvedValue(mockResult)
       await controller.remove(id)
-      expect(service.remove).toHaveBeenCalledWith(id)
+      expect(service.removeSoft).toHaveBeenCalledWith(id)
     })
 
     it('should throw NotFoundException if categoria does not exist', async () => {
       const id = 'a uuid'
-      jest.spyOn(service, 'remove').mockRejectedValue(new NotFoundException())
+      jest
+        .spyOn(service, 'removeSoft')
+        .mockRejectedValue(new NotFoundException())
       await expect(controller.remove(id)).rejects.toThrow(NotFoundException)
     })
   })
