@@ -44,14 +44,7 @@ export class CreatePersonalDto {
   })
   @IsDate()
   @IsNotEmpty()
-  fechaNacimiento: Date
-
-  @ApiProperty({
-    example: 'https://i.imgur.com/RboPIU6.png',
-    description: 'Imagen del personal',
-  })
-  @IsNotEmpty()
-  imagen: string
+  fechaNacimiento: string
 
   @ApiProperty({
     example: 'Calle de la piruleta, 1',
