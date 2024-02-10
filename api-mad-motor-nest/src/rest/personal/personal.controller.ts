@@ -36,14 +36,14 @@ export class PersonalController {
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updatePersonalDto: UpdatePersonalDto,
   ) {
     return await this.personalService.update(+id, updatePersonalDto)
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return await this.personalService.remove(+id)
   }
 }

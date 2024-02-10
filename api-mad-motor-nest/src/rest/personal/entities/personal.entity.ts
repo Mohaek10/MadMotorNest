@@ -12,11 +12,7 @@ export class Personal {
   @Column({ type: 'varchar', length: 9, nullable: false })
   dni: string
   @Column({ type: 'date', nullable: false })
-  fechaNacimiento: Date
-
-  @Column({ type: 'varchar', nullable: false })
-  imagen: string
-
+  fechaNacimiento: string
   @Column({ type: 'varchar', length: 200, nullable: false })
   direccion: string
 
