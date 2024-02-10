@@ -3,8 +3,16 @@ import { AppModule } from './app.module'
 import * as process from 'process'
 import { ValidationPipe } from '@nestjs/common'
 import * as fs from 'fs'
+import * as dotenv from 'dotenv'
 
+dotenv.config()
 async function bootstrap() {
+  if (process.env.NODE_ENV === 'dev') {
+    console.log('🚧 Modo de desarrollo activado 🚧')
+  } else {
+    console.log('🚀 Modo de producción activado 🚀')
+  }
+
   const httpsOptions = {
     key: fs.readFileSync(process.env.SSL_KEY),
     cert: fs.readFileSync(process.env.SSL_CERT),
