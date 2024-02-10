@@ -5,7 +5,9 @@ import { ValidationPipe } from '@nestjs/common'
 import * as fs from 'fs'
 import * as dotenv from 'dotenv'
 
-dotenv.config()
+dotenv.config(
+  process.env.NODE_ENV === 'dev' ? { path: '.env' } : { path: '.env.prod' },
+)
 async function bootstrap() {
   if (process.env.NODE_ENV === 'dev') {
     console.log('🚧 Modo de desarrollo activado 🚧')
