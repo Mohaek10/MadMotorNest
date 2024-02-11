@@ -11,10 +11,15 @@ import { NotificationModule } from './notification/notification.module'
 import { AuthModule } from './rest/auth/auth.module'
 import { UsersModule } from './rest/users/users.module'
 import { PedidosModule } from './rest/pedidos/pedidos.module'
+import * as process from 'process'
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot(
+      process.env.NODE_ENV === 'dev'
+        ? { envFilePath: '.env' }
+        : { envFilePath: '.env.prod' },
+    ),
     DatabaseModule,
     CacheModule.register(),
     NotificationModule,

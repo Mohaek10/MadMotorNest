@@ -16,12 +16,8 @@ export class ResponsePersonalDto {
     example: '01-01-1999',
     description: 'Fecha de nacimiento del personal',
   })
-  fechaNacimiento: Date
-  @ApiProperty({
-    example: 'https://i.imgur.com/RboPIU6.png',
-    description: 'Imagen del personal',
-  })
-  imagen: string
+  fechaNacimiento: string
+
   @ApiProperty({
     example: 'Calle de la piruleta, 1',
     description: 'Direccion del personal',

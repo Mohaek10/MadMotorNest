@@ -12,6 +12,7 @@ import {
   BadRequestException,
   UploadedFile,
   Req,
+  UseGuards,
 } from '@nestjs/common'
 import { VehiculosService } from './vehiculos.service'
 import { CreateVehiculoDto } from './dto/create-vehiculo.dto'
@@ -23,8 +24,11 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import * as process from 'process'
 import { Request } from 'express'
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
+import { Roles, RolesAuthGuard } from '../auth/guards/roles-auth.guard'
 
 @Controller('vehiculos')
+@UseGuards(JwtAuthGuard, RolesAuthGuard)
 export class VehiculosController {
   constructor(private readonly vehiculosService: VehiculosService) {}
 
@@ -40,21 +44,24 @@ export class VehiculosController {
 
   @Post()
   @HttpCode(201)
+  @Roles('ADMIN')
   create(@Body() createVehiculoDto: CreateVehiculoDto) {
     return this.vehiculosService.create(createVehiculoDto)
   }
 
   @Patch(':id')
+  @Roles('ADMIN')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateVehiculoDto: UpdateVehiculoDto,
   ) {
-    return this.vehiculosService.update(+id, updateVehiculoDto)
+    return this.vehiculosService.update(id, updateVehiculoDto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.vehiculosService.remove(+id)
+  @Roles('ADMIN')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.vehiculosService.borradoLogico(id)
   }
 
   @Patch('imagen/:id')
@@ -77,8 +84,9 @@ export class VehiculosController {
       },
     }),
   )
+  @Roles('ADMIN')
   async actualizarImagenVehiculo(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
   ) {

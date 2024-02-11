@@ -49,7 +49,14 @@ export class PedidosService {
       },
       collection: 'es_ES',
     }
-    return await this.pedidoRepo.paginate({}, options)
+    const result = await this.pedidoRepo.paginate({}, options)
+
+    const pedidosConObjectIDs = result.docs.map((pedido) => ({
+      _id: pedido._id,
+      ...pedido.toObject(),
+    }))
+
+    return pedidosConObjectIDs
   }
 
   async findOne(id: string) {
@@ -95,12 +102,20 @@ export class PedidosService {
       .exec()
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} pedido`
+  async remove(id: string) {
+    this.logger.log(`Eliminando pedido con id ${id}`)
+    const buscarPedido = this.pedidoRepo.findById(id).exec()
+    if (!buscarPedido) {
+      throw new NotFoundException(`Pedido con id ${id} no encontrado`)
+    }
+    const pedido = await buscarPedido
+    await this.devolverStock(pedido)
+    return this.pedidoRepo.findByIdAndDelete(id).exec()
   }
 
   async userExists(idUsuario: number) {
-    return await this.usuarioRepo.findOneBy({ id: idUsuario })
+    const usuario = await this.usuarioRepo.findOneBy({ id: idUsuario })
+    return !!usuario
   }
 
   private async comprobarPedido(pedido: Pedido) {

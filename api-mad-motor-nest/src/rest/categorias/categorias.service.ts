@@ -53,7 +53,6 @@ export class CategoriasService {
         activa: [FilterOperator.EQ, FilterSuffix.NOT],
       },
     })
-    console.log(res)
     await this.managerCache.set(
       `all_categorias_page_${hash(JSON.stringify(query))}`,
       res,
@@ -136,6 +135,21 @@ export class CategoriasService {
     const removeCategoria = await this.findOne(id)
     const res = await this.categoriaRepository.remove(removeCategoria)
 
+    await this.invalidateCacheKey(`catgoria_${id}`)
+    await this.invalidateCacheKey('all_categorias')
+    return res
+  }
+
+  async removeSoft(id: string) {
+    this.logger.log(`Eliminando categoria con ID: ${id}`)
+    const removeCategoria = await this.findOne(id)
+    if (!removeCategoria) {
+      throw new NotFoundException(
+        `La categoria con ID (${id}) no ha sido encontrada.`,
+      )
+    }
+    removeCategoria.isDeleted = true
+    const res = await this.categoriaRepository.save(removeCategoria)
     await this.invalidateCacheKey(`catgoria_${id}`)
     await this.invalidateCacheKey('all_categorias')
     return res

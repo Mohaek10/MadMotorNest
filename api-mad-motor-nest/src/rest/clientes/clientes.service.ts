@@ -31,7 +31,6 @@ export class ClientesService {
     private readonly clienteRepository: Repository<Cliente>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly mapper: ClientesMapper,
-    private readonly storageService: StorageService,
   ) {}
   async create(createClienteDto: CreateClienteDto) {
     this.logger.log('Guardando cliente en la base de datos')

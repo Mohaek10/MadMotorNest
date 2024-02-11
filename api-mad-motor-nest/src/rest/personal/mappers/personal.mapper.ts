@@ -20,7 +20,8 @@ export class PersonalMapper {
     updatePersonalDto: UpdatePersonalDto,
     personal: Personal,
   ): Personal {
-    const personalUpdateDto = { ...personal, ...updatePersonalDto }
+    const personalUpdateDto = plainToClass(Personal, updatePersonalDto)
+    personalUpdateDto.id = personal.id
     return personalUpdateDto
   }
 }

@@ -214,4 +214,13 @@ describe('CategoriasService', () => {
       expect(await service.remove('1')).toEqual(testCategory)
     })
   })
+  describe('removeSoft', () => {
+    it('should call the soft delete method', async () => {
+      const testCategory = new Categoria()
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(testCategory)
+      jest.spyOn(repository, 'save').mockResolvedValue(testCategory)
+
+      expect(await service.removeSoft('1')).toEqual(testCategory)
+    })
+  })
 })

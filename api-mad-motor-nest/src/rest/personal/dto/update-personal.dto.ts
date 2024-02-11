@@ -5,14 +5,6 @@ import { IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class UpdatePersonalDto extends PartialType(CreatePersonalDto) {
   @ApiProperty({
-    example:
-      'https://ih1.redbubble.net/image.398266704.9455/flat,750x1000,075,f.u3.jpg',
-    description: 'Imagen del personal',
-  })
-  @IsOptional()
-  imagen?: string
-
-  @ApiProperty({
     example: 'Calle Mayor, 1',
     description: 'Direccion del personal',
     format: 'string',
