@@ -26,18 +26,62 @@ import * as process from 'process'
 import { Request } from 'express'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { Roles, RolesAuthGuard } from '../auth/guards/roles-auth.guard'
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiNotFoundResponse,
+  ApiParam,
+  ApiProperty,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
+import { ResponseVehiculoDto } from './dto/response-vehiculo.dto'
 
 @Controller('vehiculos')
 @UseGuards(JwtAuthGuard, RolesAuthGuard)
+@ApiTags('vehiculos')
 export class VehiculosController {
   constructor(private readonly vehiculosService: VehiculosService) {}
 
   @Get()
+  @HttpCode(200)
+  @ApiResponse({ status: 200, description: 'Todos los vehiculos paginados' })
+  @ApiQuery({
+    description: 'Filtro por limite de pagina',
+    name: 'limit',
+    required: false,
+    type: Number,
+  })
+  @ApiQuery({
+    description: 'Filtro por pagina',
+    name: 'page',
+    required: false,
+    type: Number,
+  })
+  @ApiQuery({
+    description: 'Filtro de ordenación: campo:ASC|DESC',
+    name: 'sortBy',
+    required: false,
+    type: String,
+  })
   async findAll(@Paginate() query: PaginateQuery) {
     return await this.vehiculosService.findAll(query)
   }
 
   @Get(':id')
+  @HttpCode(200)
+  @ApiResponse({ status: 200, description: 'Vehiculo encontrado' })
+  @ApiBadRequestResponse({ description: 'Vehiculo no encontrado' })
+  @ApiParam({
+    description: 'Id del vehiculo',
+    name: 'id',
+    required: true,
+    type: Number,
+  })
+  @ApiBadRequestResponse({ description: 'El Id no es valido' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.vehiculosService.findOne(id)
   }
@@ -45,12 +89,44 @@ export class VehiculosController {
   @Post()
   @HttpCode(201)
   @Roles('ADMIN')
+  @ApiResponse({
+    status: 201,
+    description: 'Vehiculo creado',
+    type: ResponseVehiculoDto,
+  })
+  @ApiBadRequestResponse({ description: 'Datos no validos' })
+  @ApiBody({
+    description: 'Datos del vehiculo',
+    type: CreateVehiculoDto,
+  })
+  @ApiBadRequestResponse({ description: 'La categoria no existe' })
+  @ApiBearerAuth()
   create(@Body() createVehiculoDto: CreateVehiculoDto) {
     return this.vehiculosService.create(createVehiculoDto)
   }
 
   @Patch(':id')
   @Roles('ADMIN')
+  @HttpCode(201)
+  @ApiParam({
+    description: 'Id del vehiculo',
+    name: 'id',
+    required: true,
+    type: Number,
+  })
+  @ApiBody({
+    description: 'Datos del vehiculo',
+    type: UpdateVehiculoDto,
+  })
+  @ApiBadRequestResponse({ description: 'Datos no validos' })
+  @ApiBadRequestResponse({ description: 'La categoria no existe' })
+  @ApiResponse({
+    status: 201,
+    description: 'Vehiculo actualizado',
+    type: ResponseVehiculoDto,
+  })
+  @ApiBadRequestResponse({ description: 'El Id no es valido' })
+  @ApiBearerAuth()
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateVehiculoDto: UpdateVehiculoDto,
@@ -60,11 +136,47 @@ export class VehiculosController {
 
   @Delete(':id')
   @Roles('ADMIN')
+  @HttpCode(204)
+  @ApiParam({
+    description: 'Id del vehiculo',
+    name: 'id',
+    required: true,
+    type: Number,
+  })
+  @ApiBadRequestResponse({ description: 'El Id no es valido' })
+  @ApiBadRequestResponse({ description: 'Vehiculo no encontrado' })
+  @ApiBearerAuth()
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.vehiculosService.borradoLogico(id)
   }
 
   @Patch('imagen/:id')
+  @Roles('ADMIN')
+  @ApiResponse({
+    status: 200,
+    description: 'Imagen actualizada',
+    type: ResponseVehiculoDto,
+  })
+  @ApiBadRequestResponse({ description: 'Fichero no soportado' })
+  @ApiBadRequestResponse({ description: 'No se ha enviado ninguna imagen' })
+  @ApiParam({
+    description: 'Id del vehiculo',
+    name: 'id',
+    required: true,
+    type: Number,
+  })
+  @ApiProperty({
+    name: 'file',
+    description: 'Fichero de imagen',
+    type: 'string',
+    format: 'binary',
+  })
+  @ApiBody({
+    description: 'Fichero de imagen',
+    type: FileInterceptor('file'),
+  })
+  @ApiNotFoundResponse({ description: 'Vehiculo no encontrado' })
+  @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -84,7 +196,6 @@ export class VehiculosController {
       },
     }),
   )
-  @Roles('ADMIN')
   async actualizarImagenVehiculo(
     @Param('id', ParseIntPipe) id: number,
     @UploadedFile() file: Express.Multer.File,

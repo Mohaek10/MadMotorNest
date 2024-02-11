@@ -4,6 +4,7 @@ import * as process from 'process'
 import { ValidationPipe } from '@nestjs/common'
 import * as fs from 'fs'
 import * as dotenv from 'dotenv'
+import { setupSwagger } from './config/swagger/swagger.config'
 
 dotenv.config(
   process.env.NODE_ENV === 'dev' ? { path: '.env' } : { path: '.env.prod' },
@@ -20,6 +21,10 @@ async function bootstrap() {
     cert: fs.readFileSync(process.env.SSL_CERT),
   }
   const app = await NestFactory.create(AppModule, { httpsOptions })
+
+  if (process.env.NODE_ENV === 'dev') {
+    setupSwagger(app)
+  }
 
   app.setGlobalPrefix(process.env.API_VERSION || 'v1')
 

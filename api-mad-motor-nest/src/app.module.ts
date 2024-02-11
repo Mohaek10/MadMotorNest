@@ -12,6 +12,7 @@ import { AuthModule } from './rest/auth/auth.module'
 import { UsersModule } from './rest/users/users.module'
 import { PedidosModule } from './rest/pedidos/pedidos.module'
 import * as process from 'process'
+import { CorsConfigModule } from './config/cors/cors.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import * as process from 'process'
         ? { envFilePath: '.env' }
         : { envFilePath: '.env.prod' },
     ),
+    CorsConfigModule,
     DatabaseModule,
     CacheModule.register(),
     NotificationModule,
