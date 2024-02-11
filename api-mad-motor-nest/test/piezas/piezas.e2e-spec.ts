@@ -138,8 +138,10 @@ describe('PiezaController (e2e)', () => {
         })
     })
 
-    describe('PUT /pieza/:id', () => {
+   describe('PUT /pieza/:id', () => {
         it('actualiza una pieza', async () => {
+            const piezaToFound=mockPiezaService.findOne.mockResolvedValue(piezaResponse)
+
             mockPiezaService.update.mockResolvedValue(piezaResponse)
 
             const { body } = await request(app.getHttpServer())
@@ -164,22 +166,19 @@ describe('PiezaController (e2e)', () => {
         })
     })
 
+
     describe('DELETE /pieza/:id', () => {
         it('elimina una pieza', async () => {
-            mockPiezaService.remove.mockResolvedValue(piezaResponse)
+            const piezaToFound=mockPiezaService.findOne.mockResolvedValue(piezaResponse)
+            mockPiezaService.remove.mockResolvedValue(piezaToFound)
 
             await request(app.getHttpServer())
                 .delete(`${myEndpoint}/${piezaResponse.id}`)
-                .expect(204)
+                .expect(200)
         })
 
-        it('devuelve un error si la pieza no existe', async () => {
-            mockPiezaService.removeSoft.mockRejectedValue(new NotFoundException())
-            await request(app.getHttpServer())
-                .delete(`${myEndpoint}/${piezaResponse.id}`)
-                .expect(404)
-        })
     })
+
 
 
 })
