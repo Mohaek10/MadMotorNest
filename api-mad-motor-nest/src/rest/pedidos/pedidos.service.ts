@@ -92,8 +92,10 @@ export class PedidosService {
     if (!buscarPedido) {
       throw new NotFoundException(`Pedido con id ${id} no encontrado`)
     }
+    const pedidoInicial = this.pedidoRepo.findById(id).exec()
     const pedido = this.pedidoMapper.toPedido(updatePedidoDto)
-    await this.devolverStock(pedido)
+    const pedidoInicialtoPedido = await pedidoInicial
+    await this.devolverStock(pedidoInicialtoPedido)
     await this.comprobarPedido(pedido)
     await this.restarStock(pedido)
     pedido.updatedAt = new Date()
@@ -188,7 +190,13 @@ export class PedidosService {
         const vehiculo = await this.vehiculoRepo.findOneBy({ id })
         const precioVehiculo: number = Number(vehiculo.precio)
         this.logger.log(`Restando stock del vehiculo con id ${id}`)
-        vehiculo.stock -= linea.cantidadVehiculo
+        this.logger.log(
+          `El vehiculo tiene este es stock antes de restar_ :${vehiculo.stock}`,
+        )
+        const cantidadenLinea: number = Number(linea.cantidadVehiculo)
+        const cantidadEnVehiculo = Number(vehiculo.stock)
+        vehiculo.stock = cantidadEnVehiculo - cantidadenLinea
+        this.logger.log(`El vehiculo tiene este es stock  ${vehiculo.stock}`)
         await this.vehiculoRepo.save(vehiculo)
         this.logger.log(
           `Calculando precio de la linea${typeof linea.cantidadVehiculo} ${typeof precioVehiculo} ${typeof linea.precioVehiculo}`,
@@ -204,7 +212,12 @@ export class PedidosService {
         const id = linea.idPieza
         const pieza = await this.piezaRepo.findOne({ where: { id } })
         const precioPieza: number = Number(pieza.precio)
-        pieza.cantidad -= linea.cantidadPieza
+        const cantidadenLinea: number = Number(linea.cantidadPieza)
+        const cantidadEnPieza = Number(pieza.cantidad)
+        pieza.cantidad = cantidadEnPieza - cantidadenLinea
+        this.logger.log(
+          `Restando stock de la pieza con id ${id}  cantidad: ${pieza.cantidad}`,
+        )
         await this.piezaRepo.save(pieza)
 
         if (isNaN(linea.cantidadPieza) || isNaN(precioPieza)) {
@@ -250,13 +263,19 @@ export class PedidosService {
       if (linea.idVehiculo) {
         const id = linea.idVehiculo
         const vehiculo = await this.vehiculoRepo.findOneBy({ id })
-        vehiculo.stock += linea.cantidadVehiculo
+        const cantidadenLinea: number = Number(linea.cantidadVehiculo)
+        const cantidadEnVehiculo = Number(vehiculo.stock)
+        vehiculo.stock = cantidadEnVehiculo + cantidadenLinea
+        this.logger.log(`El vehiculo tiene este es stock${vehiculo.stock}`)
         await this.vehiculoRepo.save(vehiculo)
       }
       if (linea.idPieza) {
         const id = linea.idPieza
         const pieza = await this.piezaRepo.findOne({ where: { id } })
-        pieza.cantidad += linea.cantidadPieza
+        const cantidadenLinea: number = Number(linea.cantidadPieza)
+        const cantidadEnPieza = Number(pieza.cantidad)
+        pieza.cantidad = cantidadEnPieza + cantidadenLinea
+
         await this.piezaRepo.save(pieza)
       }
     }
