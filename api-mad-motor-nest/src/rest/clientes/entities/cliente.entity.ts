@@ -19,7 +19,7 @@ export class Cliente {
   direccion: string
   @Column({ type: 'integer', default: 10000 })
   codigoPostal: number
-  @Column({ type: 'varchar', length: 10, nullable: false, unique: false })
+  @Column({ type: 'varchar', length: 10, nullable: false, unique: true })
   dni: string
   @Column({ type: 'text', default: Cliente.IMAGEN_DEFAULT })
   imagen: string
