@@ -179,7 +179,6 @@ mohamed.elkasmi@alumno.iesluisvives.org
 miguel.vicario@alumno.iesluisvives.org
 luis.ramos@alumno.iesluisvives.org
 ruben.fernandez@alumno.iesluisvives.org
-miguel.vicario@alumno.iesluisvives.org
 joe.brandon@alumno.iesluisvives.org
 ## Agracedimientos
 ¡Gracias por visitar nuestro proyecto API REST para un concesionario de vehículos! Esperamos que encuentres útil y completo este README para comprender la estructura, funcionalidades y documentación de nuestra API.
