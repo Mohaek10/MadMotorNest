@@ -13,6 +13,7 @@ import { Repository } from 'typeorm'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache } from 'cache-manager'
 import { ClientesMapper } from './mapper/clientes.mapper'
+import { Request } from 'express'
 import {
   FilterOperator,
   FilterSuffix,
@@ -22,6 +23,7 @@ import {
 import { hash } from 'typeorm/util/StringUtils'
 import { ResponseClienteDto } from './dto/response-cliente.dto'
 import { StorageService } from '../storage/storage.service'
+import process from 'process'
 
 @Injectable()
 export class ClientesService {
@@ -31,6 +33,7 @@ export class ClientesService {
     private readonly clienteRepository: Repository<Cliente>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly mapper: ClientesMapper,
+    private readonly storageService: StorageService,
   ) {}
   async create(createClienteDto: CreateClienteDto) {
     this.logger.log('Guardando cliente en la base de datos')
@@ -125,10 +128,43 @@ export class ClientesService {
       throw new NotFoundException(`No existe el cliente con id ${id}`)
     }
   }
-  // public async updateImage(
-  //   id: number,
-  //   file: Express.Multer.File,
-  //   request: Request,
-  //   withUrl: boolean = true,
-  // ){}
+  public async updateImage(
+    id: number,
+    file: Express.Multer.File,
+    req: Request,
+    withUrl: boolean = true,
+  ) {
+    this.logger.log(`Actualizando imagen de cliente con id ${id}`)
+    const cliente = await this.searchById(id)
+    if (cliente.imagen !== Cliente.IMAGEN_DEFAULT) {
+      this.logger.log('Cliente actualizado imagen')
+      const imageName = cliente.imagen
+      try {
+        this.storageService.borraFichero(imageName)
+      } catch (e) {
+        this.logger.log('No se pudo eliminar imagen anterior')
+        throw new BadRequestException(e.message)
+      }
+    }
+    if (!file) {
+      throw new BadRequestException('No se ha subido ninguna imagen')
+    }
+    let filePath: string
+
+    if (withUrl) {
+      this.logger.log('Generando Url')
+      const version = process.env.API_VERSION
+        ? `/${process.env.API_VERSION}`
+        : 'v1'
+      filePath = `${req.protocol}://${req.get('host')}${version}/storage/${file.filename}`
+    } else {
+      filePath = file.filename
+    }
+    cliente.imagen = filePath
+    this.logger.log(`Imagen actualizada ${filePath}`)
+    await this.clienteRepository.save(cliente)
+    await this.cacheManager.del('all_clientes')
+    cliente.imagen = filePath
+    return this.mapper.toClienteResponse(cliente)
+  }
 }
