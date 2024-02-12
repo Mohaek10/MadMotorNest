@@ -15,13 +15,15 @@ import { PersonalService } from './personal.service'
 import { CreatePersonalDto } from './dto/create-personal.dto'
 import { UpdatePersonalDto } from './dto/update-personal.dto'
 import { Paginate, PaginateQuery } from 'nestjs-paginate'
-import {CacheInterceptor, CacheKey, CacheTTL} from "@nestjs/cache-manager";
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
-import {Roles, RolesAuthGuard} from "../auth/guards/roles-auth.guard";
+import { Roles, RolesAuthGuard } from '../auth/guards/roles-auth.guard'
+import { ApiTags } from '@nestjs/swagger'
 
 @Controller('personal')
 @UseInterceptors(CacheInterceptor)
-@UseGuards(JwtAuthGuard,RolesAuthGuard)
+@UseGuards(JwtAuthGuard, RolesAuthGuard)
+@ApiTags('personal')
 export class PersonalController {
   constructor(private readonly personalService: PersonalService) {}
 

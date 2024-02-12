@@ -41,7 +41,6 @@ import {
 import { ResponseVehiculoDto } from './dto/response-vehiculo.dto'
 
 @Controller('vehiculos')
-@UseGuards(JwtAuthGuard, RolesAuthGuard)
 @ApiTags('vehiculos')
 export class VehiculosController {
   constructor(private readonly vehiculosService: VehiculosService) {}
@@ -88,6 +87,7 @@ export class VehiculosController {
 
   @Post()
   @HttpCode(201)
+  @UseGuards(JwtAuthGuard, RolesAuthGuard)
   @Roles('ADMIN')
   @ApiResponse({
     status: 201,
@@ -106,6 +106,7 @@ export class VehiculosController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesAuthGuard)
   @Roles('ADMIN')
   @HttpCode(201)
   @ApiParam({
@@ -135,6 +136,7 @@ export class VehiculosController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesAuthGuard)
   @Roles('ADMIN')
   @HttpCode(204)
   @ApiParam({
@@ -151,6 +153,7 @@ export class VehiculosController {
   }
 
   @Patch('imagen/:id')
+  @UseGuards(JwtAuthGuard, RolesAuthGuard)
   @Roles('ADMIN')
   @ApiResponse({
     status: 200,

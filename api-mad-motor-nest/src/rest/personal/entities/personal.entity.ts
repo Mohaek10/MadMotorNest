@@ -25,7 +25,7 @@ export class Personal {
   @Column({ type: 'double precision', default: 1000.0, nullable: false })
   sueldo: number
 
-  @Column({ type: 'varchar', length: 20, nullable: false })
+  @Column({ type: 'varchar', length: 50, nullable: false })
   iban: string
 
   //CreateDate

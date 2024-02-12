@@ -13,6 +13,7 @@ import { UsersModule } from './rest/users/users.module'
 import { PedidosModule } from './rest/pedidos/pedidos.module'
 import * as process from 'process'
 import { CorsConfigModule } from './config/cors/cors.module'
+import { PersonalModule } from './rest/personal/personal.module'
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CorsConfigModule } from './config/cors/cors.module'
     ClientesModule,
     StorageModule,
     PiezaModule,
+    PersonalModule,
     PedidosModule,
     AuthModule,
     UsersModule,

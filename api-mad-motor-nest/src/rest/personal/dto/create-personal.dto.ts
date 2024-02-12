@@ -42,7 +42,6 @@ export class CreatePersonalDto {
     description: 'Fecha de nacimiento del personal',
     format: 'date',
   })
-  @IsDate()
   @IsNotEmpty()
   fechaNacimiento: string
 
@@ -96,13 +95,13 @@ export class CreatePersonalDto {
     example: 'ES6621000418401234567891',
     description: 'IBAN del personal',
     format: 'string',
-    minLength: 20,
-    maxLength: 20,
+    minLength: 14,
+    maxLength: 34,
   })
   @IsString()
   @IsNotEmpty()
-  @Length(20, 20, {
-    message: 'El IBAN debe tener 20 caracteres',
+  @Length(14, 34, {
+    message: 'El IBAN debe tener entre 14 y 34 caracteres',
   })
   iban: string
 }
