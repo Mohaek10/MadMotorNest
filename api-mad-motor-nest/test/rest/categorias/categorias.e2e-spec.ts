@@ -160,7 +160,7 @@ describe('CategoriasController (e2e)', () => {
 
       await request(app.getHttpServer())
         .delete(`${myEndpoint}/${categoria.id}`)
-        .expect(204)
+        .expect(202)
     })
 
     it('lanza un error 404 si la categoria no existe', async () => {
@@ -169,7 +169,7 @@ describe('CategoriasController (e2e)', () => {
       )
       await request(app.getHttpServer())
         .delete(`${myEndpoint}/${categoria.id}`)
-        .expect(204)
+        .expect(404)
     })
   })
 })
