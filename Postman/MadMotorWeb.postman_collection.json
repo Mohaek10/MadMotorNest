@@ -1,0 +1,872 @@
+{
+	"info": {
+		"_postman_id": "d8c0834b-8ee9-430c-a2f3-aed3d21c4406",
+		"name": "MadMotorWeb",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30632687"
+	},
+	"item": [
+		{
+			"name": "Personal",
+			"item": [
+				{
+					"name": "FetGetAll Personal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJpYXQiOjE3MDc3Mjc1MTksImV4cCI6MTcwNzczMTExOX0.aS0ZhQ5zCkbWrDgePsiiLPnE2BtjPuRJHL2BKQZ5acAkGrlQwwtwaBKCQ4k5jPCB3VnsITSkXi1L5FTSJQHeRg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/personal",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"personal"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/v1/personal/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"personal",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreatePersonal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJpYXQiOjE3MDc3MzExNTAsImV4cCI6MTcwNzczNDc1MH0.VbTciqgYbJNt9kzlXOQ-Wei2bRW_ytMsf3HeEdBo9LQdBe4VPc-DKAaQuuNZ2_go8bmUnM3VPFoZt4tLYAuqfw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"Juan\",\r\n  \"apellidos\": \"Perez Dominguez\",\r\n  \"dni\": \"12345678Z\",\r\n  \"fechaNacimiento\": \"1990-01-01\",\r\n  \"direccion\": \"Calle de la piruleta, 1\",\r\n  \"telefono\": \"666666666\",\r\n  \"email\": \"juanperez@gmail.com\",\r\n  \"sueldo\": 1000.0,\r\n  \"iban\": \"ES6621000418401234567891\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/personal",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"personal"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Piezas",
+			"item": [
+				{
+					"name": "Get All piezzas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/pieza",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pieza"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreatePiezas",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Filtro de aceite\",\r\n    \"descripcion\": \"Filtro de aceite para motor de gasolina 1.6L\",\r\n    \"imagen\": \"https://example.com/imagenes/filtro-aceite.jpg\",\r\n    \"precio\": 15.99,\r\n    \"cantidad\": 10,\r\n    \"isDeleted\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/pieza",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pieza"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/pieza/a894b317-5ca2-4952-8417-856774001b71",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pieza",
+								"a894b317-5ca2-4952-8417-856774001b71"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehiculos",
+			"item": [
+				{
+					"name": "CreateVehiculo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"marca\":\"Lamborgini\",\r\n    \"modelo\":\"Alfa 1\",\r\n    \"year\":2021,\r\n    \"km\":40000,\r\n    \"precio\": 999999,\r\n    \"stock\":678,\r\n    \"descripcion\":\"Bonito pero caro\",\r\n    \"categoria\":\"BERLINA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/vehiculos",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"vehiculos"
+							],
+							"query": [
+								{
+									"key": "marca",
+									"value": "AUDI",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAlll",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/vehiculos",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"vehiculos"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "marca:ASC",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "fer",
+									"disabled": true
+								},
+								{
+									"key": "filter.isDeleted",
+									"value": "$eq:false",
+									"disabled": true
+								},
+								{
+									"key": "filter.marca",
+									"value": "$eq:Ferrarri",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteVehiculo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/vehiculos/3",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"vehiculos",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateVehiculo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"marca\": \"AUDI NUEVO mas rapido y potente\",\r\n    \"stock\": 78\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/vehiculos/2",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"vehiculos",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ActualizarImagen",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1eebfa44-1e01-43d0-8193-de77648f05b4"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/vehiculos/imagen/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"vehiculos",
+								"imagen",
+								"1"
+							],
+							"query": [
+								{
+									"key": "image",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/vehiculos/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"vehiculos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categoria",
+			"item": [
+				{
+					"name": "Getall",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwMTYzNTg4OCwiZXhwIjoxNzA0MjYzODkwLCJleHRyYUNsYWltcyI6e319.ERNklZaFBCslyk5MfCSkIo4p8XJ2Ze7UaVYMHHb2yLndu_tdw7ut96E3EZrB7iR02Py5y0-vQCr5-xuUDiW3rA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/categorias",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "automatico",
+									"disabled": true
+								},
+								{
+									"key": "isDeleted",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"BERLINA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/categorias",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/categorias/bcfb0a0a-f370-4aa8-ab5f-5152c8334a66",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias",
+								"bcfb0a0a-f370-4aa8-ab5f-5152c8334a66"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pedidos",
+			"item": [
+				{
+					"name": "GetAllPedidos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJpYXQiOjE3MDc3Mjc1MTksImV4cCI6MTcwNzczMTExOX0.aS0ZhQ5zCkbWrDgePsiiLPnE2BtjPuRJHL2BKQZ5acAkGrlQwwtwaBKCQ4k5jPCB3VnsITSkXi1L5FTSJQHeRg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/pedidos",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreatePEdidos",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idUsuario\": 1,\r\n  \"cliente\":{\r\n    \"nombre\":\"moha\",\r\n    \"apellido\": \"ek\",\r\n    \"telefono\": \"1234555\",\r\n    \"direccion\":{\r\n        \"calle\":\"postas\",\r\n        \"numero\":\"34\",\r\n        \"ciudad\":\"Madrid\",\r\n        \"provinica\":\"Madrid\",\r\n        \"pais\": \"España\",\r\n        \"codigoPostal\": \"28432\"\r\n    }\r\n  },\r\n  \"lineasDePedido\": [\r\n    {\r\n      \"cantidadVehiculo\": 2,\r\n      \"idVehiculo\": \"1\",\r\n      \"precioVehiculo\": 999999,\r\n      \"total\": 999999.0\r\n    },\r\n    {\r\n        \"idPieza\":\"a894b317-5ca2-4952-8417-856774001b71\",\r\n        \"cantidadPieza\": 7,\r\n        \"precioPieza\": 1.5,\r\n        \"total\": 3\r\n    }\r\n    \r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/pedidos",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ObtenerPedidoPorId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/pedidos/65c3c7690a63273c3acd5e91",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pedidos",
+								"65c3c7690a63273c3acd5e91"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePedido",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJpYXQiOjE3MDc3Mjc1MTksImV4cCI6MTcwNzczMTExOX0.aS0ZhQ5zCkbWrDgePsiiLPnE2BtjPuRJHL2BKQZ5acAkGrlQwwtwaBKCQ4k5jPCB3VnsITSkXi1L5FTSJQHeRg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/pedidos/65c9d7bff399d297367a31ba",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pedidos",
+								"65c9d7bff399d297367a31ba"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ActualizarPedido",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJpYXQiOjE3MDc3Mjc1MTksImV4cCI6MTcwNzczMTExOX0.aS0ZhQ5zCkbWrDgePsiiLPnE2BtjPuRJHL2BKQZ5acAkGrlQwwtwaBKCQ4k5jPCB3VnsITSkXi1L5FTSJQHeRg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idUsuario\": 1,\r\n  \"cliente\":{\r\n    \"nombre\":\"moha\",\r\n    \"apellido\": \"ek\",\r\n    \"telefono\": \"1234555\",\r\n    \"direccion\":{\r\n        \"calle\":\"postas\",\r\n        \"numero\":\"34\",\r\n        \"ciudad\":\"Madrid\",\r\n        \"provinica\":\"Madrid\",\r\n        \"pais\": \"España\",\r\n        \"codigoPostal\": \"28432\"\r\n    }\r\n  },\r\n  \"lineasDePedido\": [\r\n    {\r\n      \"cantidadVehiculo\": 4,\r\n      \"idVehiculo\": \"1\",\r\n      \"precioVehiculo\": 999999,\r\n      \"total\": 999999.0\r\n    },\r\n    {\r\n        \"idPieza\":\"a894b317-5ca2-4952-8417-856774001b71\",\r\n        \"cantidadPieza\": 7,\r\n        \"precioPieza\": 1.5,\r\n        \"total\": 3\r\n    }\r\n    \r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/pedidos/65c9d7bff399d297367a31ba",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pedidos",
+								"65c9d7bff399d297367a31ba"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clientes",
+			"item": [
+				{
+					"name": "GetAllClientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/clientes",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetClienteById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/clientes/295363f6-f5b9-48fb-868e-1d8e957f7355",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"clientes",
+								"295363f6-f5b9-48fb-868e-1d8e957f7355"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "pedidos",
+					"item": [
+						{
+							"name": "CrearPedidos",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtb2hhZWsxMCIsImlhdCI6MTcwMTY0Nzc2MywiZXhwIjoxNzA0Mjc1NzY1LCJleHRyYUNsYWltcyI6e319.H18ACnBmVWmAAX8a5pPhWoKDg95HyWtSdGivcECF_oLculmBSVpX8wSL56xqW15bn35_bhaWCrFGe4LqOzVOkQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"idUsuario\":\"499f0469-171d-41b1-be4f-dc8ff5e0052c\",\r\n  \"lineasPedido\": [\r\n    {\r\n      \"cantidadVehiculos\": 2,\r\n      \"idVehiculo\": \"01fdcf7f-fd16-4748-81dc-5d51d9799811\",\r\n      \"precioVehiculo\": 50000.0\r\n    }\r\n    \r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:3000/v1/users/me/pedidos",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"v1",
+										"users",
+										"me",
+										"pedidos"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "SignInAdmin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"mohaek10\",\r\n    \"password\":\"Ruben123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/auth/signin",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateUsers",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\":\"mohamed\",\r\n    \"apellidos\":\"Ek EK\",\r\n    \"username\":\"maha2\",\r\n    \"email\":\"messi2@email.com\",\r\n    \"password\":\"Ruben123\",\r\n    \"passwordComprobacion\":\"Ruben123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/auth/signup",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllUSers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJpYXQiOjE3MDc3MjU4NTgsImV4cCI6MTcwNzcyOTQ1OH0.d9FAIXBNvEHlsUgF7jgWS4_GcZzrVA2fEXEKAafUYQtyZ9M9tY5lBD75zNCl865gA0-wv0dM4oJ5fxOLuupjJA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/users",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "auth",
+			"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJpYXQiOjE3MDc3MzExNTAsImV4cCI6MTcwNzczNDc1MH0.VbTciqgYbJNt9kzlXOQ-Wei2bRW_ytMsf3HeEdBo9LQdBe4VPc-DKAaQuuNZ2_go8bmUnM3VPFoZt4tLYAuqfw"
+		}
+	]
+}
