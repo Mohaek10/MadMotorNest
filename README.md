@@ -112,11 +112,15 @@ Bienvenido a la documentación de la API de MadMotorWeb. A continuación, se det
   - Body:
     ```json
     {
-      "marca": "Lamborghini",
-      "modelo": "Alfa 1",
-      "year": 2021,
-      ...
-    }
+    "marca":"Lamborgini",
+    "modelo":"Alfa 1",
+    "year":2021,
+    "km":40000,
+    "precio": 999999,
+    "stock":678,
+    "descripcion":"Bonito pero caro",
+    "categoria":"BERLINA"
+}
     ```
 
 - **Obtener todos los vehículos**
@@ -137,10 +141,13 @@ Bienvenido a la documentación de la API de MadMotorWeb. A continuación, se det
   - Body:
     ```json
     {
-      "nombre": "Filtro de aceite",
-      "descripcion": "Filtro de aceite para motor de gasolina 1.6L",
-      ...
-    }
+    "nombre": "Filtro de aceite",
+    "descripcion": "Filtro de aceite para motor de gasolina 1.6L",
+    "imagen": "https://example.com/imagenes/filtro-aceite.jpg",
+    "precio": 15.99,
+    "cantidad": 10,
+    "isDeleted": false
+}
     ```
 ## EndPoint de vehiculo: Detalles
 
