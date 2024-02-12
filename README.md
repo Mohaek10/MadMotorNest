@@ -120,7 +120,7 @@ Bienvenido a la documentación de la API de MadMotorWeb. A continuación, se det
     "stock":678,
     "descripcion":"Bonito pero caro",
     "categoria":"BERLINA"
-}
+    }
     ```
 
 - **Obtener todos los vehículos**
@@ -147,7 +147,7 @@ Bienvenido a la documentación de la API de MadMotorWeb. A continuación, se det
     "precio": 15.99,
     "cantidad": 10,
     "isDeleted": false
-}
+    }
     ```
 ## EndPoint de vehiculo: Detalles
 
