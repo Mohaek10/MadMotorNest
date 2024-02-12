@@ -62,7 +62,8 @@ CREATE TABLE "public"."user_roles" (
 ) WITH (oids = false);
 
 INSERT INTO "user_roles" ("id", "role", "user_id") VALUES
-(1,	'ADMIN',	1);
+(1,	'ADMIN',	1),
+(2,	'USER',	1);
 
 DROP TABLE IF EXISTS "usuarios";
 DROP SEQUENCE IF EXISTS usuarios_id_seq;
@@ -112,5 +113,24 @@ INSERT INTO "vehiculos" ("id", "marca", "modelo", "year", "km", "precio", "stock
 ALTER TABLE ONLY "public"."user_roles" ADD CONSTRAINT "FK_87b8888186ca9769c960e926870" FOREIGN KEY (user_id) REFERENCES usuarios(id) NOT DEFERRABLE;
 
 ALTER TABLE ONLY "public"."vehiculos" ADD CONSTRAINT "FK_2efc1b6ca8e8edb4a7e99e98464" FOREIGN KEY (categoria_id) REFERENCES categorias(id) NOT DEFERRABLE;
+
+DROP TABLE IF EXISTS "personal";
+DROP SEQUENCE IF EXISTS personal_id_seq;
+CREATE SEQUENCE personal_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
+CREATE TABLE "public"."personal" (
+    "id" bigint DEFAULT nextval('personal_id_seq') NOT NULL,
+    "nombre" character varying NOT NULL,
+    "apellidos" character varying NOT NULL,
+    "dni" character varying NOT NULL,
+    "fechaNacimiento" character varying NOT NULL,
+    "direccion" character varying NOT NULL,
+    "telefono" character varying NOT NULL,
+    "email" character varying NOT NULL,
+    "sueldo" character varying DEFAULT '1000' NOT NULL,
+    "iban" character varying NOT NULL,
+    CONSTRAINT "PK_7a849a61cdfe8eee39892d7b1b1" PRIMARY KEY ("id")
+) WITH (oids = false);
+
 
 -- 2024-02-06 11:55:03.927527+00
